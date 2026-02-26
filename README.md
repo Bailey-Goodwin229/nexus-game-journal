@@ -1,0 +1,1 @@
+Gamers often return to complex RPGs or Strategy games after a break and forget their current objective or strategy. Nexus Journal solves this by allowing users to create a list of games they are actively playing and write down the last thing they were working on or toward os that they can pick up right where they left off without losing momentum.
