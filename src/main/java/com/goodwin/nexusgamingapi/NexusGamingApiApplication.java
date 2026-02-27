@@ -13,6 +13,17 @@ public class NexusGamingApiApplication {
         // Gets the twitch service we just made
         TwitchService service = context.getBean(TwitchService.class);
 
+        // calls new method and prints result for handshake to get access to api
+        TwitchTokenResponse response = service.getAccessToken();
+
+        if (response != null){
+            System.out.println("--- SUCCESS! ---");
+            System.out.println("Access Token: " + response.getAccessToken());
+            System.out.println("Expires In: " + response.getExpiresIn());
+            System.out.println("Token Type: " + response.getTokenType());
+            System.out.println("Access Token: " + response.getAccessToken());
+        }
+
     }
 
 }
