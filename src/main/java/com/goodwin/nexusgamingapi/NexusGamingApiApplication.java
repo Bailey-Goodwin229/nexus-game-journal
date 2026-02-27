@@ -20,6 +20,8 @@ public class NexusGamingApiApplication {
             System.out.println("--- SUCCESS! ---");
             System.out.println("Access Token: " + response.getAccessToken());
             System.out.println("Expires In: " + response.getExpiresIn());
+            System.out.println("Token Type: " + response.getTokenType());
+            System.out.println("Access Token: " + response.getAccessToken());
         }
 
     }

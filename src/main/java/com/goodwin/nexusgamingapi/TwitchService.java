@@ -15,13 +15,27 @@ public class TwitchService {
 
     @Value("${twitch.client.id}")
     private String clientId;
-
+    @Value("${TWITCH_URL}")
+    private String url;
     @Value("${twitch.client.secret}")
     private String clientSecret;
 
-    private String url = "https://id.twitch.tv/oauth2/token";
+    private final RestTemplate restTemplate;
 
-    public TwitchTokenResponse getAccessToken(){
+    public TwitchService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    private String cachedToken;
+
+    public TwitchTokenResponse getAccessToken() {
+
+        // Checks to see if the token is already cached, if it is, return it
+        if (this.cachedToken != null) {
+            TwitchTokenResponse cachedResponse = new TwitchTokenResponse();
+            cachedResponse.setAccessToken(this.cachedToken);
+            return cachedResponse;
+        }
 
         // create multi value map to hold multiple values as one object
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
@@ -34,14 +48,16 @@ public class TwitchService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.postForObject(
-                url,
-                request,
-                TwitchTokenResponse.class);
+        System.out.println("Calling Twitch API...");
 
-        return restTemplate.postForObject(url, request, TwitchTokenResponse.class);
+        // Fetch the token
+        TwitchTokenResponse response = this.restTemplate.postForObject(url, request, TwitchTokenResponse.class);
+
+        // save it to cache before returning
+        if (response != null){
+            this.cachedToken = response.getAccessToken();
+        }
+
+        return response;
     }
 }
-
-
