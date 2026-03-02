@@ -10,6 +10,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+
 @Service
 public class TwitchService {
 
@@ -20,18 +22,19 @@ public class TwitchService {
     @Value("${twitch.client.secret}")
     private String clientSecret;
 
+    private String cachedToken;
+    private LocalDateTime expirationTime;
+
     private final RestTemplate restTemplate;
 
     public TwitchService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    private String cachedToken;
-
     public TwitchTokenResponse getAccessToken() {
 
         // Checks to see if the token is already cached, if it is, return it
-        if (this.cachedToken != null) {
+        if (this.cachedToken != null && expirationTime != null && LocalDateTime.now().isBefore(expirationTime)) {
             TwitchTokenResponse cachedResponse = new TwitchTokenResponse();
             cachedResponse.setAccessToken(this.cachedToken);
             return cachedResponse;
@@ -56,6 +59,7 @@ public class TwitchService {
         // save it to cache before returning
         if (response != null){
             this.cachedToken = response.getAccessToken();
+            this.expirationTime = LocalDateTime.now().plusSeconds(response.getExpiresIn());
         }
 
         return response;
