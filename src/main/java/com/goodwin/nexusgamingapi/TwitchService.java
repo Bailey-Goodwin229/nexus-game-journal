@@ -1,6 +1,7 @@
 package com.goodwin.nexusgamingapi;
 // Class to use the keys so I can make an api call
 
+import com.goodwin.nexusgamingapi.dto.GameResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,16 +12,21 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class TwitchService {
 
     @Value("${twitch.client.id}")
     private String clientId;
-    @Value("${TWITCH_URL}")
-    private String url;
+    @Value("${twitch.url}")
+    private String twitchUrl;
     @Value("${twitch.client.secret}")
     private String clientSecret;
+    @Value("${twitch.api.url}")
+    private String twitchApiUrl;
 
     private String cachedToken;
     private LocalDateTime expirationTime;
@@ -53,8 +59,9 @@ public class TwitchService {
 
         System.out.println("Calling Twitch API...");
 
+
         // Fetch the token
-        TwitchTokenResponse response = this.restTemplate.postForObject(url, request, TwitchTokenResponse.class);
+        TwitchTokenResponse response = this.restTemplate.postForObject(twitchUrl, request, TwitchTokenResponse.class);
 
         // save it to cache before returning
         if (response != null){
@@ -64,4 +71,36 @@ public class TwitchService {
 
         return response;
     }
+
+    public List<GameResponse> searchGame(String gameName){
+        // Get the token from verified cache
+        String token = getAccessToken().getAccessToken();
+
+        // initialize headers
+        HttpHeaders headers = new HttpHeaders();
+
+        // Set client ID
+        headers.set("Client-ID", clientId);
+
+        // Set the authorization
+        headers.set("Authorization", "Bearer " + token);
+
+        // Build the Query Body
+        String body = String.format("fields name, summary, cover.url; search \"%s\"; limit 10;", gameName);
+
+        // Wrap Headers and Body into an HttpEntity
+        HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
+
+        // Make the POST call
+        // IGDB returns an ARRAY of games, so we map it to GameResponse[]
+        GameResponse[] response = restTemplate.postForObject(
+                twitchApiUrl,
+                requestEntity,
+                GameResponse[].class
+        );
+
+        // Convert Array to list
+        return response != null ? Arrays.asList(response) : Collections.emptyList();
+    }
+
 }
