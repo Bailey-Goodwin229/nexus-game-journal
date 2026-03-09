@@ -21,8 +21,8 @@ public class GameController {
     }
 
     @GetMapping("/search")
-    public List<GameResponse> searchGames(@RequestParam String title){
-        return twitchService.searchGame(title);
+    public List<GameResponse> searchGames(@RequestParam String gameName){
+        return twitchService.searchGame(gameName);
     }
 
 }

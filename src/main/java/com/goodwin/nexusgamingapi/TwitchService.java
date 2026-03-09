@@ -1,5 +1,5 @@
 package com.goodwin.nexusgamingapi;
-// Class to use the keys so I can make an api call
+
 
 import com.goodwin.nexusgamingapi.dto.GameResponse;
 import org.springframework.beans.factory.annotation.Value;
