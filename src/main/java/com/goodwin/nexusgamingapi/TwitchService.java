@@ -2,6 +2,8 @@ package com.goodwin.nexusgamingapi;
 
 
 import com.goodwin.nexusgamingapi.dto.GameResponse;
+import com.goodwin.nexusgamingapi.entity.Game;
+import com.goodwin.nexusgamingapi.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +33,12 @@ public class TwitchService {
     private String cachedToken;
     private LocalDateTime expirationTime;
 
+    private final GameRepository gameRepository;
+
     private final RestTemplate restTemplate;
 
-    public TwitchService(RestTemplate restTemplate) {
+    public TwitchService(GameRepository gameRepository, RestTemplate restTemplate) {
+        this.gameRepository = gameRepository;
         this.restTemplate = restTemplate;
     }
 
@@ -101,6 +106,26 @@ public class TwitchService {
 
         // Convert Array to list
         return response != null ? Arrays.asList(response) : Collections.emptyList();
+    }
+
+    // Function to save game data into database
+    public void saveGameFromTwitch(GameResponse response){
+
+
+        // Checks to make sure there isn't already a saved game before saving
+        if (!gameRepository.existsByTwitchId(response.id())){
+
+            // Initialize new empty "Database Raw"
+            Game gameEntity = new Game();
+
+            gameEntity.setTwitchId(response.id());
+            gameEntity.setTitle(response.name());
+
+            gameRepository.save(gameEntity);
+            System.out.println("Saving new game: " + response.name());
+
+        }
+
     }
 
 }
