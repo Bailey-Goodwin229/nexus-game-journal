@@ -16,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 @Service
@@ -104,9 +106,14 @@ public class TwitchService {
                 GameResponse[].class
         );
 
-        // Uses for loop to go through games and save them to database
+        // Create a set to ensure only unique games are in the list from ID's we've seen form this search
+        Set<String> seenIds = new HashSet<>();
+
+        // Uses for loop to go through games and save them to database and filters stream using the new set
         if (response != null){
-            Arrays.stream(response).forEach(this::saveGameFromTwitch);
+            Arrays.stream(response)
+                    .filter(game -> seenIds.add(game.id()))
+                    .forEach(this::saveGameFromTwitch);
         }
 
         // Convert Array to list
@@ -127,7 +134,7 @@ public class TwitchService {
             gameEntity.setTitle(response.name());
 
             gameRepository.save(gameEntity);
-            System.out.println("Saving new game: " + response.name());
+            System.out.println("Saving new game: " + response.name() + " [ID: " + response.id() + "]");
 
         }
 
