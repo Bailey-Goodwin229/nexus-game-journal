@@ -104,6 +104,11 @@ public class TwitchService {
                 GameResponse[].class
         );
 
+        // Uses for loop to go through games and save them to database
+        if (response != null){
+            Arrays.stream(response).forEach(this::saveGameFromTwitch);
+        }
+
         // Convert Array to list
         return response != null ? Arrays.asList(response) : Collections.emptyList();
     }
