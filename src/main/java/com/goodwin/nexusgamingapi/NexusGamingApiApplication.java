@@ -7,22 +7,11 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 @SpringBootApplication
 public class NexusGamingApiApplication {
 
+    // Main function just acts as a way to "run" the server while the other applications (controllers) direct what actions are performed
+    // API handshake already happens in other methods, I don't need to call it here
+    // "Lazy Loading" ~ you don't do the work until someone asks for it.
     public static void main(String[] args) {
         var context = SpringApplication.run(NexusGamingApiApplication.class, args);
-
-        // Gets the twitch service we just made
-        TwitchService service = context.getBean(TwitchService.class);
-
-        // calls new method and prints result for handshake to get access to api
-        TwitchTokenResponse response = service.getAccessToken();
-
-        if (response != null){
-            System.out.println("--- SUCCESS! ---");
-            System.out.println("Access Token: " + response.getAccessToken());
-            System.out.println("Expires In: " + response.getExpiresIn());
-            System.out.println("Token Type: " + response.getTokenType());
-            System.out.println("Access Token: " + response.getAccessToken());
-        }
 
     }
 
