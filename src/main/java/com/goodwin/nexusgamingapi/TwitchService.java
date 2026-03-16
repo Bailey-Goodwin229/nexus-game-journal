@@ -112,7 +112,7 @@ public class TwitchService {
         // Uses for loop to go through games and save them to database and filters stream using the new set
         if (response != null){
             Arrays.stream(response)
-                    .filter(game -> seenIds.add(game.id()))
+                    .filter(game -> seenIds.add(game.name()))
                     .forEach(this::saveGameFromTwitch);
         }
 
@@ -125,7 +125,7 @@ public class TwitchService {
 
 
         // Checks to make sure there isn't already a saved game before saving
-        if (!gameRepository.existsByTwitchId(response.id())){
+        if (!gameRepository.existsByTitle(response.name())){
 
             // Initialize new empty "Database Raw"
             Game gameEntity = new Game();

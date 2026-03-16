@@ -12,5 +12,6 @@ public interface  GameRepository extends JpaRepository<Game, Long> {
 
     // Adds variable that returns boolean to see if twitchId is saved in two separate places
     boolean existsByTwitchId(String twitchId);
+    boolean existsByTitle(String name);
 
 }
