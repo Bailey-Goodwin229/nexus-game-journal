@@ -33,7 +33,7 @@ public class Game {
     private String twitchId;
 
     // Variables for box art and igdb id
-    private String boxArtUrl;
+    private String coverArtUrl;
     private String igdbId;
 
     // Creates time stamp variables for when an entry is created or updated
@@ -44,4 +44,6 @@ public class Game {
     private LocalDateTime updatedAt;
 
 
+    public void setURL() {
+    }
 }

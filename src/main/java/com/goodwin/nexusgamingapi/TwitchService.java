@@ -132,12 +132,33 @@ public class TwitchService {
 
             gameEntity.setTwitchId(response.id());
             gameEntity.setTitle(response.name());
+            gameEntity.setCoverArtUrl(formatCoverUrl(response));
 
             gameRepository.save(gameEntity);
             System.out.println("Saving new game: " + response.name() + " [ID: " + response.id() + "]");
 
         }
 
+    }
+
+    // Method that changes url to get higher resolution for game cover art
+    private String formatCoverUrl(GameResponse response){
+
+        // Check is cover art url is missing
+        if (response.cover() == null || response.cover().url() == null){
+            return null;
+        }
+
+        // Create new variable for url
+        String url = response.cover().url();
+
+        // Add the protocol if it starts with //
+        if (url.startsWith("//")){
+            url = "https:" + url;
+        }
+
+        // upgrade the quality
+        return url.replace("t_thumb", "t_cover_big");
     }
 
 }
