@@ -1,6 +1,7 @@
 package com.goodwin.nexusgamingapi;
 
 
+import com.goodwin.nexusgamingapi.dto.GameDTO;
 import com.goodwin.nexusgamingapi.dto.GameResponse;
 import com.goodwin.nexusgamingapi.entity.Game;
 import com.goodwin.nexusgamingapi.repository.GameRepository;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TwitchService {
@@ -79,7 +81,7 @@ public class TwitchService {
         return response;
     }
 
-    public List<GameResponse> searchGame(String gameName){
+    public List<GameDTO> searchGame(String gameName){
         // Get the token from verified cache
         String token = getAccessToken().getAccessToken();
 
@@ -110,14 +112,21 @@ public class TwitchService {
         Set<String> seenIds = new HashSet<>();
 
         // Uses for loop to go through games and save them to database and filters stream using the new set
-        if (response != null){
-            Arrays.stream(response)
+        // returns DTO to front end
+        if (response != null) {
+            return Arrays.stream(response)
                     .filter(game -> seenIds.add(game.name()))
-                    .forEach(this::saveGameFromTwitch);
+                    .peek(this::saveGameFromTwitch)
+                    .map(game -> new GameDTO(
+                            game.id(),
+                            game.name(),
+                            game.summary(),
+                            formatCoverUrl(game)
+                    ))
+                    .collect(Collectors.toList());
+        }else{
+            return Collections.emptyList();
         }
-
-        // Convert Array to list
-        return response != null ? Arrays.asList(response) : Collections.emptyList();
     }
 
     // Function to save game data into database

@@ -1,6 +1,7 @@
 package com.goodwin.nexusgamingapi.controller;
 
 import com.goodwin.nexusgamingapi.TwitchService;
+import com.goodwin.nexusgamingapi.dto.GameDTO;
 import com.goodwin.nexusgamingapi.dto.GameResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ public class GameController {
     }
 
     @GetMapping("/search")
-    public List<GameResponse> searchGames(@RequestParam(name = "title") String gameName){
+    public List<GameDTO> searchGames(@RequestParam(name = "title") String gameName){
         return twitchService.searchGame(gameName);
     }
 
