@@ -1,6 +1,7 @@
-package com.goodwin.nexusgamingapi;
+package com.goodwin.nexusgamingapi.service;
 
 
+import com.goodwin.nexusgamingapi.TwitchTokenResponse;
 import com.goodwin.nexusgamingapi.dto.GameDTO;
 import com.goodwin.nexusgamingapi.dto.GameResponse;
 import com.goodwin.nexusgamingapi.entity.Game;

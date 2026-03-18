@@ -1,5 +1,6 @@
 package com.goodwin.nexusgamingapi;
 
+import com.goodwin.nexusgamingapi.service.TwitchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

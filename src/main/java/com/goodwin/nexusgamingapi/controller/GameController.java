@@ -1,8 +1,7 @@
 package com.goodwin.nexusgamingapi.controller;
 
-import com.goodwin.nexusgamingapi.TwitchService;
+import com.goodwin.nexusgamingapi.service.TwitchService;
 import com.goodwin.nexusgamingapi.dto.GameDTO;
-import com.goodwin.nexusgamingapi.dto.GameResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
