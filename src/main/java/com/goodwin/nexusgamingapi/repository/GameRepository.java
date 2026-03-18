@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface  GameRepository extends JpaRepository<Game, Long> {
+public interface GameRepository extends JpaRepository<Game, Long> {
 
     // Spring will write the SQL for me automatically using twitchId
     Optional<Game> findByTwitchId(String twitchId);
