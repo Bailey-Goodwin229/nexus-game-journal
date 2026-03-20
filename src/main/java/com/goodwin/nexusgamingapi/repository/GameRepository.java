@@ -8,10 +8,10 @@ import java.util.Optional;
 public interface GameRepository extends JpaRepository<Game, Long> {
 
     // Spring will write the SQL for me automatically using twitchId
-    Optional<Game> findByTwitchId(String twitchId);
+    Optional<Game> findByTwitchId(Long twitchId);
 
     // Adds variable that returns boolean to see if twitchId is saved in two separate places
-    boolean existsByTwitchId(String twitchId);
+    boolean existsByTwitchId(Long twitchId);
     boolean existsByTitle(String name);
 
 }

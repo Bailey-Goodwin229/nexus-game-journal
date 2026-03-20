@@ -30,7 +30,7 @@ public class Game {
 
     // Creates a unique column for twitchId
     @Column(unique = true)
-    private String twitchId;
+    private Long twitchId;
 
     // Variables for box art and igdb id
     private String coverArtUrl;

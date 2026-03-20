@@ -1,7 +1,7 @@
 package com.goodwin.nexusgamingapi.dto;
 
 public record JournalRequestDTO(
-        String twitchId,
+        Long twitchId,
         int rating,
         String notes
 ) {}
