@@ -22,6 +22,9 @@ public class JournalEntry {
 
     private int ratings;
 
+    @Column(nullable = false)
+    private String title;
+
     @Column(columnDefinition = "TEXT")
     private String notes;
 
@@ -31,4 +34,6 @@ public class JournalEntry {
     @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
+
+
 }

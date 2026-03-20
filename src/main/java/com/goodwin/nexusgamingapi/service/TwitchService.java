@@ -3,7 +3,7 @@ package com.goodwin.nexusgamingapi.service;
 
 import com.goodwin.nexusgamingapi.TwitchTokenResponse;
 import com.goodwin.nexusgamingapi.dto.GameDTO;
-import com.goodwin.nexusgamingapi.dto.GameResponse;
+import com.goodwin.nexusgamingapi.dto.GameResponseDTO;
 import com.goodwin.nexusgamingapi.entity.Game;
 import com.goodwin.nexusgamingapi.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,10 +103,10 @@ public class TwitchService {
 
         // Make the POST call
         // IGDB returns an ARRAY of games, so we map it to GameResponse[]
-        GameResponse[] response = restTemplate.postForObject(
+        GameResponseDTO[] response = restTemplate.postForObject(
                 twitchApiUrl,
                 requestEntity,
-                GameResponse[].class
+                GameResponseDTO[].class
         );
 
         // Create a set to ensure only unique games are in the list from ID's we've seen form this search
@@ -116,11 +116,11 @@ public class TwitchService {
         // returns DTO to front end
         if (response != null) {
             return Arrays.stream(response)
-                    .filter(game -> seenIds.add(game.name()))
+                    .filter(game -> seenIds.add(game.gameName()))
                     .peek(this::saveGameFromTwitch)
                     .map(game -> new GameDTO(
                             game.id(),
-                            game.name(),
+                            game.gameName(),
                             game.summary(),
                             formatCoverUrl(game)
                     ))
@@ -131,28 +131,28 @@ public class TwitchService {
     }
 
     // Function to save game data into database
-    public void saveGameFromTwitch(GameResponse response){
+    public void saveGameFromTwitch(GameResponseDTO response){
 
 
         // Checks to make sure there isn't already a saved game before saving
-        if (!gameRepository.existsByTitle(response.name())){
+        if (!gameRepository.existsByTitle(response.gameName())){
 
             // Initialize new empty "Database Raw"
             Game gameEntity = new Game();
 
             gameEntity.setTwitchId(response.id());
-            gameEntity.setTitle(response.name());
+            gameEntity.setTitle(response.gameName());
             gameEntity.setCoverArtUrl(formatCoverUrl(response));
 
             gameRepository.save(gameEntity);
-            System.out.println("Saving new game: " + response.name() + " [ID: " + response.id() + "]");
+            System.out.println("Saving new game: " + response.gameName() + " [ID: " + response.id() + "]");
 
         }
 
     }
 
     // Method that changes url to get higher resolution for game cover art
-    private String formatCoverUrl(GameResponse response){
+    private String formatCoverUrl(GameResponseDTO response){
 
         // Check is cover art url is missing
         if (response.cover() == null || response.cover().url() == null){
