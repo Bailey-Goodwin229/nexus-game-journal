@@ -19,7 +19,7 @@ public class JournalController {
     // Calls the journal service class into this class
     private final JournalService journalService;
 
-    // sets route for post request
+    // sets route for post request (Create)
     @PostMapping("/save")
     public ResponseEntity<JournalResponseDTO> saveReview(@RequestBody JournalRequestDTO request){
         // We catch the returned DTO from the service
@@ -29,9 +29,25 @@ public class JournalController {
         return new ResponseEntity<>(savedEntry, HttpStatus.CREATED);
     }
 
+    // Read
     @GetMapping
     public ResponseEntity<List<JournalResponseDTO>> getAllEntries(){
         List<JournalResponseDTO> entries = journalService.getAllJournalEntries();
         return ResponseEntity.ok(entries); // Shorthand for 200 OK
+    }
+
+    // Update
+    @PutMapping("/{id}")
+    public ResponseEntity<JournalResponseDTO> update(@PathVariable Long id, @RequestBody JournalRequestDTO request) {
+        // Pass the ID from url and data from the body to the service
+        JournalResponseDTO updated = journalService.updateEntry(id, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    // Destroy
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEntry(@PathVariable Long id) {
+        journalService.deleteEntry(id);
+        return ResponseEntity.noContent().build();
     }
 }
