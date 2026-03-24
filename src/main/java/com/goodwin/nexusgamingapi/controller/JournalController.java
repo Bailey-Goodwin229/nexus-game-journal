@@ -3,6 +3,7 @@ package com.goodwin.nexusgamingapi.controller;
 import com.goodwin.nexusgamingapi.dto.JournalRequestDTO;
 import com.goodwin.nexusgamingapi.dto.JournalResponseDTO;
 import com.goodwin.nexusgamingapi.service.JournalService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class JournalController {
 
     // sets route for post request (Create)
     @PostMapping("/save")
-    public ResponseEntity<JournalResponseDTO> saveReview(@RequestBody JournalRequestDTO request){
+    public ResponseEntity<JournalResponseDTO> saveReview(@Valid @RequestBody JournalRequestDTO request){
         // We catch the returned DTO from the service
         JournalResponseDTO savedEntry = journalService.createEntry(request);
 
@@ -38,7 +39,7 @@ public class JournalController {
 
     // Update
     @PutMapping("/{id}")
-    public ResponseEntity<JournalResponseDTO> update(@PathVariable Long id, @RequestBody JournalRequestDTO request) {
+    public ResponseEntity<JournalResponseDTO> update(@PathVariable Long id, @Valid @RequestBody JournalRequestDTO request) {
         // Pass the ID from url and data from the body to the service
         JournalResponseDTO updated = journalService.updateEntry(id, request);
         return ResponseEntity.ok(updated);

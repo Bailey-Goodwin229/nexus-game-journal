@@ -68,7 +68,7 @@ public class JournalService {
 
     }
 
-    // MEthod to update journal entry
+    // Method to update journal entry
     public JournalResponseDTO updateEntry(Long journalId, JournalRequestDTO request){
 
         // Finds the journal id
