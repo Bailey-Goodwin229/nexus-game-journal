@@ -11,4 +11,13 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
     // Returns items by the latest item added
     List<JournalEntry> findAllByOrderByEntryDateDesc();
 
+    // Query
+    // 1. FindBy -> standard JPA start
+    // 2. Game -> looks at game entity inside journal
+    // 3. _Title -> Looks at the title field inside the game
+    // 4. ContainingIgnoreCase -> Make it a fuzzy, case-insensitive search
+    List<JournalEntry> findByGame_TitleContainingIgnoreCase(String title);
+
+
+
 }

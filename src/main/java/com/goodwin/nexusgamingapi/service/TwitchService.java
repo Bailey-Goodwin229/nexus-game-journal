@@ -133,6 +133,11 @@ public class TwitchService {
     // Function to save game data into database
     public void saveGameFromTwitch(GameResponseDTO response){
 
+            if (response.gameName() == null || response.gameName().isBlank()) {
+                System.out.println("SKIPPING SAVE: Received null title for Twitch ID: " + response.id());
+                return;
+            }
+
 
         // Checks to make sure there isn't already a saved game before saving
         if (!gameRepository.existsByTitle(response.gameName())){

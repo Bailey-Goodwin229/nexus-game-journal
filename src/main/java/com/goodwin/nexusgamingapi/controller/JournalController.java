@@ -51,4 +51,10 @@ public class JournalController {
         journalService.deleteEntry(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<JournalResponseDTO>> searchByTitle(@RequestParam String title){
+        List<JournalResponseDTO> results = journalService.searchByGameTitle(title);
+        return ResponseEntity.ok(results);
+    }
 }

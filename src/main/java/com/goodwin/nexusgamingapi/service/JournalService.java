@@ -17,7 +17,7 @@ import java.util.List;
 public class JournalService {
 
     // Call repositories
-    private final JournalEntryRepository journalRepository;
+    private final JournalEntryRepository journalEntryRepository;
     private final GameRepository gameRepository;
 
     public JournalResponseDTO createEntry(JournalRequestDTO request){
@@ -40,7 +40,7 @@ public class JournalService {
 
 
         // Save, tells repository to put it into the database
-        JournalEntry savedEntry = journalRepository.save(entry);
+        JournalEntry savedEntry = journalEntryRepository.save(entry);
 
         System.out.println("SUCCESS: Saved journal entry for " + game.getTitle());
 
@@ -61,7 +61,7 @@ public class JournalService {
 
     // Method that fetches entries from database and turns them into a list
     public List<JournalResponseDTO> getAllJournalEntries(){
-        return journalRepository.findAllByOrderByEntryDateDesc()
+        return journalEntryRepository.findAllByOrderByEntryDateDesc()
                 .stream()
                 .map(this::mapToResponseDTO)
                 .toList();
@@ -72,7 +72,7 @@ public class JournalService {
     public JournalResponseDTO updateEntry(Long journalId, JournalRequestDTO request){
 
         // Finds the journal id
-        JournalEntry entry = journalRepository.findById(journalId)
+        JournalEntry entry = journalEntryRepository.findById(journalId)
                 .orElseThrow(() -> new RuntimeException("Journal entry not found with ID: " + journalId));
 
         // Finds the game
@@ -91,7 +91,7 @@ public class JournalService {
 
 
         // Save, tells repository to put it into the database
-        JournalEntry updatedEntry = journalRepository.save(entry);
+        JournalEntry updatedEntry = journalEntryRepository.save(entry);
 
         System.out.println("SUCCESS: Updated journal entry ID " + journalId);
 
@@ -101,11 +101,18 @@ public class JournalService {
     // Method to delete an entry
     public void deleteEntry(Long id){
         // Check if entry exists
-        if (!journalRepository.existsById(id)){
+        if (!journalEntryRepository.existsById(id)){
             throw new RuntimeException("Cannot delete: Entry " + id + " does not exist.");
         }
-        journalRepository.deleteById(id);
+        journalEntryRepository.deleteById(id);
         System.out.println("SUCCESS: Deleted journal entry ID " + id);
+    }
+
+    public List<JournalResponseDTO> searchByGameTitle(String title){
+        return journalEntryRepository.findByGame_TitleContainingIgnoreCase(title)
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
     }
 }
 
