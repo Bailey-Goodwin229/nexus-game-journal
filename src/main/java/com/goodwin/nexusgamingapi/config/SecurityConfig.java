@@ -11,6 +11,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,38 +19,18 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${APP_USERNAME}")
-    private String appUsername;
-
-    @Value("${APP_PASSWORD}")
-    private String appPassword;
 
     private final GlobalExceptionHandler globalExceptionHandler;
 
-    // Used to create an account to navigate around the application with approval
-    @Bean
-    public UserDetailsService userDetailsService(){
-        // This creates a bailey user in memory so the system can find it
-        UserDetails user = User.withUsername(appUsername)
-                .password(appPassword)
-                .authorities("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
-
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        // Tells spring to compare passwords as plain text for now
-        return NoOpPasswordEncoder.getInstance();
-    }
+    // Inject the filter
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -64,16 +45,17 @@ public class SecurityConfig {
                         .anyRequest().authenticated()                          // Private: Everything else needs a login
                 )
 
-                // 3. Enable Basic Auth (The "Fast Pass")
-                .httpBasic(Customizer.withDefaults());
+                // Switch to Stateless (No more Cookies!)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
+                //  Put our Guard at the very front of the line
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
 }
 
 
