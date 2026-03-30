@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
+// Journal Service does the heavy lifting and houses the methods for the journal Controller
 @Service
 @RequiredArgsConstructor
 public class JournalService {
@@ -108,6 +109,7 @@ public class JournalService {
         System.out.println("SUCCESS: Deleted journal entry ID " + id);
     }
 
+    // Returns a list of games using JournalRepository that user searches, shows them results.
     public List<JournalResponseDTO> searchByGameTitle(String title){
         return journalEntryRepository.findByGame_TitleContainingIgnoreCase(title)
                 .stream()

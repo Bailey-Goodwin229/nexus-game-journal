@@ -43,7 +43,7 @@ public class Game {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
+    // Setter for URL
     public void setURL() {
     }
 }

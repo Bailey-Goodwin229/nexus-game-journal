@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Twitch service class does the heavy lifting and action for the controller which relays what actions need to be taken
 @Service
 public class TwitchService {
 
@@ -42,11 +43,13 @@ public class TwitchService {
 
     private final RestTemplate restTemplate;
 
+    // Constructor for GameRepository and RestTemplate
     public TwitchService(GameRepository gameRepository, RestTemplate restTemplate) {
         this.gameRepository = gameRepository;
         this.restTemplate = restTemplate;
     }
 
+    // Gets the access token from Twitch if there isn't one already, if there is it reuses the current token.
     public TwitchTokenResponse getAccessToken() {
 
         // Checks to see if the token is already cached, if it is, return it
@@ -82,6 +85,7 @@ public class TwitchService {
         return response;
     }
 
+    // Methods that returns a list of games that is searched by user or returns and empty list of there is no match
     public List<GameDTO> searchGame(String gameName){
         // Get the token from verified cache
         String token = getAccessToken().getAccessToken();

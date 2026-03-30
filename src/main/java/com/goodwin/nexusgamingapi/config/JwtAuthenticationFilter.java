@@ -21,9 +21,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    // Calls JwtService and UserDetailsService
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
+    // Intercepts users and confirms if user is holding a valid JWT Keycard
     @Override
     protected  void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
     throws ServletException, IOException{
@@ -58,6 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response); // Ensures the quest is pushed along if accepted, if not it kicks them out (Denies)
     }
 }

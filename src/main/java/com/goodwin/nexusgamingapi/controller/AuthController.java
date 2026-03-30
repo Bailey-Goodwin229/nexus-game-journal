@@ -1,6 +1,5 @@
 package com.goodwin.nexusgamingapi.controller;
 
-
 import com.goodwin.nexusgamingapi.dto.LoginRequestDTO;
 import com.goodwin.nexusgamingapi.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,7 @@ public class AuthController {
         // 2. If we reach the line, login was a success! Mint token.
         String token = jwtService.generateToken(request.username());
 
+        // return token with a response
         return ResponseEntity.ok(token);
     }
 }

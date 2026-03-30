@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.client.RestTemplate;
 
-// class to inject rest template into project instead of hard coding
+// class to inject rest template into project instead of hard coding and other security methods for jwt
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,28 +26,32 @@ public class AppConfig {
     @Value("${APP_PASSWORD}")
     private String appPassword;
 
+    // Tells Spring to create an instance of the RestTemplate tool and keep it in the tool box so I can use it anywhere in the app
     @Bean
     public RestTemplate restTemplate(){
         return new RestTemplate();
-    }
+    } // Uses RestTemplate for Twitch/IGDB API call
 
+    // Tells Spring boot who is allowed to log in before we move to the database
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername(appUsername)
-                .password(appPassword)
-                .authorities("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
+        UserDetails user = User.withUsername(appUsername) // declares a new user using app_Username
+                .password(appPassword) // sets the password to be appPassword
+                .authorities("USER") // gives the user and "Role" or "Level"
+                .build(); // Finalizes the identity into a UserDetails object
+        return new InMemoryUserDetailsManager(user); // returns the users memory from RAM because we aren't using database
     }
 
+    // De-coder for passwords, tells Spring Security how to compare passwords from users to the ones in Environmental Variables
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return NoOpPasswordEncoder.getInstance();// Get single Instance of plain text
     }
 
+    // Decision maker who actually checks the ID
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+        return config.getAuthenticationManager(); // Takes login request and determines if it's valid
     }
 
 }

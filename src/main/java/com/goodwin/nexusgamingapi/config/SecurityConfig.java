@@ -26,12 +26,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-
-    private final GlobalExceptionHandler globalExceptionHandler;
+    private final GlobalExceptionHandler globalExceptionHandler; // Catches any errors at the front and will translate it
 
     // Inject the filter
     private final JwtAuthenticationFilter jwtAuthFilter;
 
+    // "Master BLueprint" for app security! Tells spring which doors to lock, which keys to accept, and how the guard should behave
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -53,7 +53,7 @@ public class SecurityConfig {
                 //  Put our Guard at the very front of the line
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
+        return http.build(); // Squishes all the rules into a security chain for spring to use and enforce.
     }
 
 }

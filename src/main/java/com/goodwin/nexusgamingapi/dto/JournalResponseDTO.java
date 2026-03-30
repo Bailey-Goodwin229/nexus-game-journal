@@ -1,5 +1,6 @@
 package com.goodwin.nexusgamingapi.dto;
 
+// Sends the following information back to the user to see when used
 public record JournalResponseDTO(
         Long journalId,
         String title, // title of the entry
@@ -7,6 +8,4 @@ public record JournalResponseDTO(
         String coverArtUrl,
         Integer ratings,
         String notes
-) {
-
-}
+) {}

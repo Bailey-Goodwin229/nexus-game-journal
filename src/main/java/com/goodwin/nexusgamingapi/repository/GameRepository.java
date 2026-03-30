@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+// Used to write SQL queries in Game entity
 public interface GameRepository extends JpaRepository<Game, Long> {
 
     // Spring will write the SQL for me automatically using twitchId

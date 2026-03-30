@@ -20,6 +20,7 @@ public class GameController {
         this.twitchService = twitchService;
     }
 
+    // Method that returns game information when searched by title from the Twitch API, done through the website.
     @GetMapping("/search")
     public List<GameDTO> searchGames(@RequestParam(name = "title") String gameName){
         return twitchService.searchGame(gameName);

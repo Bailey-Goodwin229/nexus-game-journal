@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+// Used to write SQL queries for the JournalEntry entity (Database)
 @Repository
 public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long> {
     // Returns items by the latest item added

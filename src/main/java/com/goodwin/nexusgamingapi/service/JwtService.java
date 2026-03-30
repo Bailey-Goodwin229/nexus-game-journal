@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+// Service class for JWT which does the heavy lifting for generating and managing tokens/login
 @Service
 public class JwtService {
 
@@ -60,10 +61,12 @@ public class JwtService {
 
     // Private Helpers ---------
 
+    // Checks if token is expired
     private boolean isTokenExpired(String token){
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
+    // Extracts all the claims
     private Claims extractAllClaims(String token){
         // For JJWT 0.12+, use .verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload()
         // For JJWT 0.11.x, use the syntax below:

@@ -1,7 +1,5 @@
 package com.goodwin.nexusgamingapi.entity;
 
-// Entity class for the journal entry information
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+// Entity class for the journal entry information in the database
 @Entity
 @Data
 @NoArgsConstructor

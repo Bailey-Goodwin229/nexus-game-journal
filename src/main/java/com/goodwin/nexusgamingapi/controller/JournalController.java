@@ -42,19 +42,20 @@ public class JournalController {
     public ResponseEntity<JournalResponseDTO> update(@PathVariable Long id, @Valid @RequestBody JournalRequestDTO request) {
         // Pass the ID from url and data from the body to the service
         JournalResponseDTO updated = journalService.updateEntry(id, request);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(updated); // return updated message with response
     }
 
     // Destroy
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEntry(@PathVariable Long id) {
-        journalService.deleteEntry(id);
-        return ResponseEntity.noContent().build();
+        journalService.deleteEntry(id); // deletes entry if found using method in journal service
+        return ResponseEntity.noContent().build(); // return response with no content when done
     }
 
+    // Allows user to search the database for journal return and returns it to the screen if found
     @GetMapping("/search")
     public ResponseEntity<List<JournalResponseDTO>> searchByTitle(@RequestParam String title){
-        List<JournalResponseDTO> results = journalService.searchByGameTitle(title);
-        return ResponseEntity.ok(results);
+        List<JournalResponseDTO> results = journalService.searchByGameTitle(title); // gets a list of results from journal service
+        return ResponseEntity.ok(results); // returns result with response
     }
 }
