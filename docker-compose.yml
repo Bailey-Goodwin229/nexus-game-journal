@@ -11,7 +11,7 @@ services:
       - db_data:/var/lib/mysql
 
   app:
-    build: .
+    build: ..
     depends_on:
       - mysqldb
     environment:
