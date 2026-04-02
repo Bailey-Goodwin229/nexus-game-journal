@@ -3,7 +3,7 @@ import axios from 'axios' // Axios is HTTP Client
 // Create an 'instance'
 const api = axios.create({
     // Gets the URL from our .env file.
-    baseUrl: import.meta.env.VITE_API_BASEURL || 'http://localhost:8080/api',
+    baseURL: import.meta.env.VITE_API_BASEURL || 'http://localhost:8080/api',
 });
 
 // automatically attach the JWT "Keycard" to every request
