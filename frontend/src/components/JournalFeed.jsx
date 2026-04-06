@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import api from '../api/axios'; // Our "Senior" Axios instance with the Interceptor
+import api from '../api/axios';
+import AddEntryForm from './AddEntryForm';// Our "Senior" Axios instance with the Interceptor
 
 const JournalFeed = () => {
     // 1. State Management
@@ -31,6 +32,7 @@ const JournalFeed = () => {
     return (
         <div className="journal-feed">
             <h1>Your Gaming Archive</h1>
+            <AddEntryForm onEntryAdded={(newEntry) => setEntries([newEntry, ...entries])} />
             <div className="entries-grid">
                 {/* 4. The "Map" (Like a for-each loop in Java/Thymeleaf) */}
                 {entries.length > 0 ? (
@@ -49,6 +51,11 @@ const JournalFeed = () => {
             </div>
         </div>
     );
+};
+
+const handleEntryAdded = (newEntry) => {
+    // Take the existing entries and add the new one to the front!
+    setEntries([newEntry, ...entries]);
 };
 
 export default JournalFeed;

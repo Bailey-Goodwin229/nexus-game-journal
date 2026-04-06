@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 // Entity class for the journal entry information in the database
 @Entity
@@ -27,7 +27,7 @@ public class JournalEntry {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    private LocalDate entryDate;
+    private LocalDateTime createdAt;
 
     // Connects entry to a specific game
     @ManyToOne

@@ -9,7 +9,7 @@ import com.goodwin.nexusgamingapi.repository.JournalEntryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 // Journal Service does the heavy lifting and houses the methods for the journal Controller
@@ -24,8 +24,8 @@ public class JournalService {
     public JournalResponseDTO createEntry(JournalRequestDTO request){
 
         // Finds the game
-        Game game = gameRepository.findByTwitchId(request.twitchId())
-                .orElseThrow(() -> new RuntimeException("Could not find game with Twitch ID: " + request.twitchId()));
+        Game game = gameRepository.findByTitle(request.gameTitle())
+                .orElseThrow(() -> new RuntimeException("Could not find game with Twitch ID: " + request.gameTitle()));
 
         // Creates the "Paper" for the journal
         JournalEntry entry = new JournalEntry();
@@ -34,7 +34,7 @@ public class JournalService {
         entry.setTitle(request.title());
         entry.setRatings(request.ratings());
         entry.setNotes(request.notes());
-        entry.setEntryDate(LocalDate.now());
+        entry.setCreatedAt(LocalDateTime.now());
 
         // Tell the entry which game it belongs to
         entry.setGame(game);
@@ -56,13 +56,14 @@ public class JournalService {
                 entry.getGame().getTitle(),
                 entry.getGame().getCoverArtUrl(),
                 entry.getRatings(),
-                entry.getNotes()
+                entry.getNotes(),
+                entry.getCreatedAt()
         );
     }
 
     // Method that fetches entries from database and turns them into a list
     public List<JournalResponseDTO> getAllJournalEntries(){
-        return journalEntryRepository.findAllByOrderByEntryDateDesc()
+        return journalEntryRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
                 .map(this::mapToResponseDTO)
                 .toList();
@@ -77,15 +78,15 @@ public class JournalService {
                 .orElseThrow(() -> new RuntimeException("Journal entry not found with ID: " + journalId));
 
         // Finds the game
-        Game game = gameRepository.findByTwitchId(request.twitchId())
-                .orElseThrow(() -> new RuntimeException("Could not find game with Twitch ID: " + request.twitchId()));
+        Game game = gameRepository.findByTitle(request.gameTitle())
+                .orElseThrow(() -> new RuntimeException("Could not find game with Twitch ID: " + request.gameTitle()));
 
 
         // Sets the information from the entry
         entry.setTitle(request.title());
         entry.setRatings(request.ratings());
         entry.setNotes(request.notes());
-        entry.setEntryDate(LocalDate.now());
+        entry.setCreatedAt(LocalDateTime.now());
 
         // Tell the entry which game it belongs to
         entry.setGame(game);

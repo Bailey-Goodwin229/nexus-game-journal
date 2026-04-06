@@ -10,6 +10,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
 
     // Spring will write the SQL for me automatically using twitchId
     Optional<Game> findByTwitchId(Long twitchId);
+    Optional<Game> findByTitle(String title);
 
     // Adds variable that returns boolean to see if twitchId is saved in two separate places
     boolean existsByTwitchId(Long twitchId);

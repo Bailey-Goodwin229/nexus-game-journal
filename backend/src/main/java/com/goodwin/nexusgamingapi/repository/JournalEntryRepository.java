@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long> {
     // Returns items by the latest item added
-    List<JournalEntry> findAllByOrderByEntryDateDesc();
+    List<JournalEntry> findAllByOrderByCreatedAtDesc();
 
     // Query
     // 1. FindBy -> standard JPA start

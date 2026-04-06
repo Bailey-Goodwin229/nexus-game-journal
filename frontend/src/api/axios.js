@@ -19,4 +19,19 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+// Add a RESPONSE interceptor
+api.interceptors.response.use(
+    (response) => response, // If the response is good, just return it
+    (error) => {
+        // If the server returns 401 or 403, the token is likely expired
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            console.warn("Token expired or invalid. Redirecting to login...");
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login'; // Force them to re-authenticate
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default api; // Makes this 'Bean' available to other files
