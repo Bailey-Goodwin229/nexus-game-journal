@@ -38,6 +38,13 @@ const JournalFeed = () => {
                 {entries.length > 0 ? (
                     entries.map((entry) => (
                         <div key={entry.journalId} className="game-card">
+                            {entry.coverArtUrl && (
+                                <img
+                                    src={entry.coverArtUrl}
+                                    alt={entry.gameTitle}
+                                    className="game-card-art"
+                                />
+                            )}
                             <h3>{entry.gameTitle}</h3>
                             <h3 className="entry-title">{entry.title}</h3>
                             <p className="rating">Rating: {entry.ratings}/10</p>

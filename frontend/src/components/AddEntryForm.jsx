@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { searchGames } from '../services/gameService';
 import api from '../api/axios';
+import '../App.css';
 
 const AddEntryForm = ({ onEntryAdded }) => {
 
@@ -41,12 +42,33 @@ const AddEntryForm = ({ onEntryAdded }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Create a payload to match Entity structure
+        const payload = {
+            title: formData.title,
+            ratings: formData.ratings,
+            notes: formData.notes,
+            // Wrap game details in a 'game' object to match @ManyToOne
+            game: {
+                title: formData.gameTitle,
+                twitchId: Number(formData.twitchId),
+                coverArtUrl: formData.coverArtUrl
+            }
+        };
+
         try {
             // POSTing to your @PostMapping endpoint in JournalController
             const response = await api.post('/journal/save', formData);
 
             // Clear the form on success
-            setFormData({ title: '', gameTitle: '', ratings: 5, notes: '' });
+            setFormData({
+                title: '',
+                gameTitle: '',
+                twitchId: '',
+                ratings: 5,
+                notes: '' });
+
+            setSearchTerm('');
 
             // Tell the parent (JournalFeed) to refresh the list!
             onEntryAdded(response.data);
@@ -69,8 +91,8 @@ const AddEntryForm = ({ onEntryAdded }) => {
                 {/* 1. Display Search Results Dropdown */}
                 {searchResults.length > 0 && (
                     <ul className="search-results-dropdown">
-                      {searchResults.map((game) => (
-                          <li key={game.twitchId} onClick={() => {
+                      {searchResults.map((game, index) => (
+                          <li key={`${game.twitchId || 'game'}-${index}`} onClick={() => {
                               // 2. AUTO-FILL Logic: When they click, fill the form!
                               setFormData({
                                   ...formData,
@@ -89,7 +111,7 @@ const AddEntryForm = ({ onEntryAdded }) => {
             </div>
             <input
                 type='text'
-                placeholder="Entry Title (e.g. Masterpiece!)"
+                placeholder="Journal Entry Title (e.g. Masterpiece!)"
                 value={formData.title}
                 onChange={(e) => setFormData({...formData, title: e.target.value})}
                 required
@@ -107,6 +129,8 @@ const AddEntryForm = ({ onEntryAdded }) => {
                 value={formData.notes}
                 onChange={(e) => setFormData({...formData, notes: e.target.value})}
             />
+
+
             <button type="submit">Deploy to Journal</button>
         </form>
     );
