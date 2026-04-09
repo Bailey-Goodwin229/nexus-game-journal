@@ -226,3 +226,14 @@
   background-color: #00ff73;
   transform: translateY(-2px);
 }
+
+.star-container span:hover {
+  transform: scale(1.2);
+}
+
+/* Optional: Make the star container look professional */
+.rating-input label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}

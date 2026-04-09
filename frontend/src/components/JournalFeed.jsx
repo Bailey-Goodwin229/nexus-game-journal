@@ -25,6 +25,14 @@ const JournalFeed = () => {
         fetchJournal();
         }, []); // The empty array [] means "Only run this once when the page loads"
 
+    // Organizes data from the journal and groups it by game
+    const groupedEntries = entries.reduce((groups, entry) => {
+        const game = entry.gameTitle || "Uncategorized";
+        if (!groups[game]) groups[game] = [];
+        groups[game].push(entry);
+        return groups;
+    }, {});
+
     // 3. Conditional Rendering (Handling Loading/Errors)
     if (loading) return <div className="nexus-loader">Scanning The Nexus...</div>;
     if (error) return <div className="nexus-error">{error}</div>;
@@ -33,23 +41,45 @@ const JournalFeed = () => {
         <div className="journal-feed">
             <h1>Your Gaming Archive</h1>
             <AddEntryForm onEntryAdded={(newEntry) => setEntries([newEntry, ...entries])} />
-            <div className="entries-grid">
-                {/* 4. The "Map" (Like a for-each loop in Java/Thymeleaf) */}
-                {entries.length > 0 ? (
-                    entries.map((entry) => (
-                        <div key={entry.journalId} className="game-card">
-                            {entry.coverArtUrl && (
-                                <img
-                                    src={entry.coverArtUrl}
-                                    alt={entry.gameTitle}
-                                    className="game-card-art"
-                                />
-                            )}
-                            <h3>{entry.gameTitle}</h3>
-                            <h3 className="entry-title">{entry.title}</h3>
-                            <p className="rating">Rating: {entry.ratings}/10</p>
-                            <p className="notes">{entry.notes}</p>
-                            <small>Logged on: {entry.createdAt ? new Date(entry.createdAt).toLocaleDateString() : 'Pending...'}</small>
+
+            <div className="entries-container">
+                {Object.keys(groupedEntries).length > 0 ? (
+                    // 1. Loop through each game name
+                    Object.keys(groupedEntries).map((gameTitle) => (
+                        <div key={gameTitle} className="game-section" style={{ marginBottom: '40px' }}>
+                            {/* 2. Big Header for the Game */}
+                            <h2 className="game-group-title" style={{ borderBottom: '2px solid #444', paddingBottom: '10px' }}>
+                                {gameTitle}
+                            </h2>
+
+                            {/* 3. Grid of entries for THIS game only */}
+                            <div className="entries-grid">
+                                {groupedEntries[gameTitle].map((entry) => (
+                                        <div key={entry.journalId} className="game-card">
+                                            {entry.coverArtUrl && (
+                                                <img
+                                                    src={entry.coverArtUrl}
+                                                    alt={entry.gameTitle}
+                                                    className="game-card-art"
+                                                />
+                                            )}
+                                            <h3>{entry.gameTitle}</h3>
+                                            <h3 className="entry-title">{entry.title}</h3>
+                                            <p className="rating">Rating:
+                                                {[...Array(10)].map((_, index) => (
+                                                    <span
+                                                        key={index}
+                                                        style={{ color: index < entry.ratings ? '#ffc107' : '#444' }}
+                                                    >
+                                                        ★
+                                                    </span>
+                                                ))}
+                                            </p>
+                                            <p className="notes">{entry.notes}</p>
+                                            <small>Logged on: {entry.createdAt ? new Date(entry.createdAt).toLocaleDateString() : 'Pending...'}</small>
+                                        </div>
+                                    ))}
+                            </div>
                         </div>
                     ))
                 ) : (

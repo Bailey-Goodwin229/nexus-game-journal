@@ -118,11 +118,24 @@ const AddEntryForm = ({ onEntryAdded }) => {
             />
             <div className="rating-input">
                 <label>Rating: {formData.ratings}/10</label>
-                <input
-                    type="range" min="1" max="10"
-                    value={formData.ratings}
-                    onChange={(e) => setFormData({...formData, ratings: parseInt(e.target.value)})}
-                />
+                <div className="star-container" style={{ display: 'flex', gap: '5px', cursor: 'pointer' }}>
+                    {[...Array(10)].map((_, index) => {
+                        const starValue = index + 1;
+                        return (
+                            <span
+                                key={starValue}
+                                onClick={() => setFormData({ ...formData, ratings: starValue })}
+                                style={{
+                                    fontSize: '2rem',
+                                    color: starValue <= formData.ratings ? '#ffc107' : '#e4e5e9', // Gold for filled, gray for empty
+                                    transition: 'color 0.2s'
+                                }}
+                            >
+                                ★
+                            </span>
+                        );
+                    })}
+                </div>
             </div>
             <textarea
                 placeholder="Your thoughts..."
