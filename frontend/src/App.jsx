@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import JournalFeed from './components/JournalFeed';
+import GameJournalPage from './components/GameJournalPage';
 
 // 1. The "GateKeeper" (Guard)
 // This functions checks the "Keycard" (token) before letting someone through the door.
@@ -29,6 +30,15 @@ function App() {
                     </ProtectRoute>
                 }
             />
+
+              {/* Protected route for individual game pages */}
+              <Route
+                  path="/journal/:gameTitle"
+                  element={
+                  <ProtectRoute>
+                      <GameJournalPage />
+                  </ProtectRoute>
+                  }
 
               {/* Redirect the root '/' to '/journal'.
               The Guard will catch them if they aren't logged in! */}
