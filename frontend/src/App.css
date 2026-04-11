@@ -183,6 +183,7 @@
   }
 }
 
+.game-group-title,
 .add-entry-form {
   display: flex;
   flex-direction: column;
@@ -191,6 +192,30 @@
   margin: 2rem auto;
   padding: 20px;
   border-radius: 12px;
+  align-items: center;    /* Centers children horizontally */
+  text-align: center;     /* Centers text inside labels/inputs */
+}
+
+.game-header-toggle {
+  height: auto;          /* Let it grow if the title is 2 or 3 lines */
+  min-height: 80px;      /* But keep a nice minimum size */
+  display: flex;
+  align-items: center;   /* Vertically centers the text next to the image */
+  padding: 10px 0;
+}
+
+/* Target the title on the individual game page */
+.game-detail-page h1 {
+  line-height: 1.3;         /* Forces space between wrapped lines */
+  margin-bottom: 20px;
+  padding-top: 10px;
+  display: block;           /* Ensures it acts as a container */
+}
+
+/* Also apply it to the headers in your feed list just in case */
+.game-header-toggle h2 {
+  line-height: 1.3;   /* Resets default margins that might be pushing it */
+  word-wrap: break-word;    /* Breaks the long title properly */
 }
 
 /* Individual inputs and textarea */

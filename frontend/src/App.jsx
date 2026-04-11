@@ -39,9 +39,10 @@ function App() {
                       <GameJournalPage />
                   </ProtectRoute>
                   }
+                  />
 
-              {/* Redirect the root '/' to '/journal'.
-              The Guard will catch them if they aren't logged in! */}
+              {/* Redirect the root '/' to '/journal'*/}
+                  {/* The Guard will catch them if they aren't logged in! */}
               <Route path="/" element={<Navigate to="/journal" />} />
           </Routes>
         </div>

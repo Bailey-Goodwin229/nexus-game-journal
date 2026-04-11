@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
+import { Link } from 'react-router-dom';
 import AddEntryForm from './AddEntryForm';// Our "Senior" Axios instance with the Interceptor
 
 /**
@@ -13,38 +14,16 @@ const GameSection = ({ gameTitle, entries }) => {
 
     return (
         <div className="game-section" style={{ marginBottom: '40px' }}>
-            {/* The clickable area */}
-            <div
-                className="game-header-toggle"
-                onClick={() => setIsOpen(!isOpen)}
-                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '20px', borderBottom: '2px solid #444', paddingBottom: '10px' }}
+            {/* Navigates to /journal/GameName */}
+            <Link
+                to={`/journal/${encodeURIComponent(gameTitle)}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
             >
-                {coverArt && (
-                    <img src={coverArt} alt={gameTitle} style={{ width: '80px', borderRadius: '8px' }} />
-                )}
-                <div>
-                    <h2 style={{ margin: 0 }}>{gameTitle}</h2>
-                    <small>{isOpen ? '▲ Hide Journals' : '▼ View Journals'} ({entries.length})</small>
+                <div className="game-header-toggle" style={{ display: 'flex', alignItems: 'center', gap: '20px', cursor: 'pointer' }}>
+                    {coverArt && <img src={coverArt} alt={gameTitle} style={{ width: '80px', borderRadius: '8px' }} />}
+                    <h2>{gameTitle} ({entries.length})</h2>
                 </div>
-            </div>
-
-            {/* Only show entries when the image/header is clicked */}
-            {isOpen && (
-                <div className="entries-grid" style={{ marginTop: '20px' }}>
-                    {entries.map((entry) => (
-                        <div key={entry.journalId} className="game-card">
-                            <h3 className="entry-title">{entry.title}</h3>
-                            <div className="rating">
-                                Rating: {[...Array(10)].map((_, index) => (
-                                <span key={index} style={{ color: index < entry.ratings ? '#ffc107' : '#444' }}>★</span>
-                            ))}
-                            </div>
-                            <p className="notes">{entry.notes}</p>
-                            <small>Logged on: {entry.createdAt ? new Date(entry.createdAt).toLocaleDateString() : 'Pending...'}</small>
-                        </div>
-                    ))}
-                </div>
-            )}
+            </Link>
         </div>
     );
 };
