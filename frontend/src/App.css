@@ -1,3 +1,7 @@
+/*
+.counter: A styled button/box using CSS Variables (like var(--accent)).
+The &:hover and &:focus-visible blocks handle how it looks when you mouse over it or navigate with a keyboard (adding borders and outlines).
+ */
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -17,6 +21,11 @@
   }
 }
 
+/*
+This section creates a 3D-looking logo effect using CSS Transforms.
+.base, .framework, .vite: These are layered on top of each other using position: absolute.
+The Math: The transform: perspective(2000px) rotateZ(300deg)... lines tilt and spin the images to make them look like they are floating in 3D space.
+ */
 .hero {
   position: relative;
 
@@ -56,6 +65,9 @@
   }
 }
 
+/*
+#center: The main vertical "spine" of your page. It centers everything using Flexbox.
+ */
 #center {
   display: flex;
   flex-direction: column;
@@ -70,6 +82,9 @@
   }
 }
 
+/*
+#next-steps: A horizontal row that splits into columns.
+ */
 #next-steps {
   display: flex;
   border-top: 1px solid var(--border);
@@ -183,6 +198,10 @@
   }
 }
 
+/*
+.add-entry-form: Your journal entry box.
+It uses flex-direction: column and align-items: center to stack all inputs vertically and keep them centered in the middle of the screen.
+ */
 .game-group-title,
 .add-entry-form {
   display: flex;

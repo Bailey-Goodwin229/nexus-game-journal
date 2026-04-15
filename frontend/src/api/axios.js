@@ -1,5 +1,10 @@
 import axios from 'axios' // Axios is HTTP Client
 
+/*
+This is your Axios Interceptor file.
+It’s like a "security checkpoint" that every single communication between your React app and your Spring Boot backend must pass through.
+ */
+
 // Create an 'instance'
 const api = axios.create({
     // Gets the URL from our .env file.
@@ -33,7 +38,5 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-
-
 
 export default api; // Makes this 'Bean' available to other files
