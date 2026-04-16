@@ -42,6 +42,21 @@ const GameJournalPage = () => {
 
     if (loading) return <div>Loading the Archive...</div>;
 
+     const handleDelete = async (journalId) => {
+         // A safety check to make sure you want to delete the item
+         if (!window.confirm("Are you sure you would like to delete this?")) return;
+
+         try {
+             await api.delete(`/journal/${journalId}`);
+             // Update the UI: Filter out the deleted entry so it disappears immediately
+             setEntries(prevEntries => prevEntries.filter(entry => entry.journalId !== journalId));
+         } catch (err) {
+             console.error("Failed to delete entry:", err);
+             alert("Could not delete the entry. Try again!");
+         }
+
+     }
+
     return (
         <div className="game-detail-page" style={{ padding: '20px' }}>
             {/* A button that sends the user back to the main list. Because it’s a Link, it doesn’t reload the whole site; it just swaps the view back instantly. */}
@@ -106,6 +121,27 @@ const GameJournalPage = () => {
                                 }}>★</span>
                             ))}
                         </div>
+                        {/* 4. DELETE BUTTON: Bottom Right */}
+                        <button
+                            onClick={() => handleDelete(entry.journalId)}
+                            style={{
+                                position: 'absolute',
+                                bottom: '15px',
+                                right: '20px',
+                                background: 'none',
+                                border: 'none',
+                                color: '#ff4d4d', // Nice "alert" red
+                                cursor: 'pointer',
+                                fontSize: '0.8rem',
+                                fontWeight: 'bold',
+                                opacity: '0.6',
+                                transition: 'opacity 0.2s'
+                            }}
+                            onMouseOver={(e) => e.target.style.opacity = '1'}
+                            onMouseOut={(e) => e.target.style.opacity = '0.6'}
+                        >
+                            🗑️
+                        </button>
                     </div>
                 ))}
             </div>
