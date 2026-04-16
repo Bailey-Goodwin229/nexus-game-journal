@@ -1,16 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import api from '../api/axios';
 import '../App.css';
 
 // Defines the component; it receives onEntryAdded, a function to tell the parent component to refresh when a new entry is saved.
-const AddEntryForm = ({ onEntryAdded }) => {
+const AddEntryForm = ({ onEntryAdded, preselectedGame, twitchId, coverArtUrl }) => {
 
-    // 1. Staging State: for the text box
-    // searchTerm tracks what the user types in the search box; searchResults holds the list of games returned by the API.
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-
-    // 2. Data State: what actually gets saved to DB
+    // Data State: what actually gets saved to DB
     // is the "source of truth" for the final database entry, including the entry title, the selected game's metadata, a 1-10 rating, and notes.
     const [formData, setFormData] = useState({
         title: '',
@@ -29,17 +24,15 @@ const AddEntryForm = ({ onEntryAdded }) => {
             title: formData.title,
             ratings: formData.ratings,
             notes: formData.notes,
-            // Wrap game details in a 'game' object to match @ManyToOne
-            game: {
-                title: formData.gameTitle,
-                twitchId: Number(formData.twitchId),
-                coverArtUrl: formData.coverArtUrl
-            }
+
+            gameTitle: preselectedGame,
+            twitchId: Number(twitchId) || 0,
+            coverArtUrl: coverArtUrl || ''
         };
 
         try {
             // POSTing to your @PostMapping endpoint in JournalController
-            const response = await api.post('/journal/save', formData);
+            const response = await api.post('/journal/save', payload);
 
             // Clear the form on success
             setFormData({
@@ -48,8 +41,6 @@ const AddEntryForm = ({ onEntryAdded }) => {
                 twitchId: '',
                 ratings: 5,
                 notes: '' });
-
-            setSearchTerm('');
 
             // Tell the parent (JournalFeed) to refresh the list!
             onEntryAdded(response.data);

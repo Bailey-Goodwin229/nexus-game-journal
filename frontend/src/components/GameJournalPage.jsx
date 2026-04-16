@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import api from '../api/axios'; // Imports information from axios
 import AddEntryForm from './AddEntryForm';
 
@@ -11,6 +11,8 @@ Its job is to act like a specific "folder" in your archive, showing only the not
 const GameJournalPage = () => {
 
     const { gameTitle } = useParams(); // Grabs the title from the URl
+    const location = useLocation();
+    const gameData = location.state || {};
     const [entries, setEntries] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -48,20 +50,61 @@ const GameJournalPage = () => {
             <h1>{decodeURIComponent(gameTitle)}</h1>
             <AddEntryForm
                 preselectedGame={decodeURIComponent(gameTitle)}
+                twitchId={gameData.twitchId}
+                coverArt={gameData.coverArtUrl}
                 onEntryAdded={(newEntry) => setEntries(prevEntries => [newEntry, ...prevEntries])}
             />
             <div className="entries-grid">
-                {/* This loop draws a card for every journal entry found for this specific game. */}
                 {entries.map(entry => (
-                    <div key={entry.journalId} className="game-card">
-                        <h3>{entry.title}</h3>
-                        <p>{entry.notes}</p>
-                        {/* This is your Star Rating display logic.
-                        It creates 10 spans and colors them gold (#ffc107) if the index is less than the entry's rating, and gray (#444) if it's higher. */}
-                        <div className="rating">
-                            Rating: {[...Array(10)].map((_, index) => (
-                            <span key={index} style={{ color: index < entry.ratings ? '#ffc107' : '#444' }}>★</span>
-                        ))}
+                    <div key={entry.journalId} className="game-card" style={{ padding: '30px', marginBottom: '20px', position: 'relative' }}>
+                        {/* 1. Centered Title */}
+                        <h3 style={{
+                            textAlign: 'center',
+                            marginBottom: '15px',
+                            borderBottom: '2px solid #333',
+                            paddingBottom: '10px'
+                        }}>
+                            {entry.title}
+                        </h3>
+
+                        {/* DATE: TOP RIGHT */}
+                        <span style={{
+                            position: 'absolute',
+                            top: '15px',
+                            right: '20px',
+                            color: '#000000',
+                            fontSize: '0.8rem',
+                            fontWeight: '500'
+                        }}>
+                            {new Date(entry.createdAt).toLocaleDateString()}
+                        </span>
+
+                        {/* 2. Left-aligned Text */}
+                        <p style={{
+                            textAlign: 'left',
+                            lineHeight: '1.6',
+                            whiteSpace: 'pre-wrap',
+                            color: '#000000',
+                            minHeight: '100px' // Ensures small notes don't look squished
+                        }}>
+                            {entry.notes}
+                        </p>
+
+                        {/* RATING: TOP LEFT */}
+                        <div style={{
+                            position: 'absolute',
+                            top: '15px',
+                            left: '20px',
+                            fontSize: '0.9rem',
+                            color: '#333',
+                            fontWeight: 'bold'
+                        }}>
+                            {[...Array(10)].map((_, index) => (
+                                <span key={index} style={{
+                                    color: index < entry.ratings ? '#ffc107' : '#e0e0e0',
+                                    fontSize: '1rem'
+                                }}>★</span>
+                            ))}
                         </div>
                     </div>
                 ))}

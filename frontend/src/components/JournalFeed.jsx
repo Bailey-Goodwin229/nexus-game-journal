@@ -95,7 +95,7 @@ const JournalFeed = () => {
             <div className="search-section">
                 <input
                     type="text"
-                    placeholder="Search for a game to add an entry..."
+                    placeholder="Search for a game..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -104,7 +104,9 @@ const JournalFeed = () => {
                         {searchResults.map((game) => (
                             <li
                                 key={game.twitchId}
-                                onClick={() => navigate(`/journal/${encodeURIComponent(game.title)}`)}
+                                onClick={() => navigate(`/journal/${encodeURIComponent(game.title)}`, {
+                                    state: { twitchId: game.twitchId, coverArtUrl: game.coverArtUrl }
+                                })}
                             >
                                 {game.title}
                             </li>

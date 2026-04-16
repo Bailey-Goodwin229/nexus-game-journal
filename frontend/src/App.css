@@ -281,3 +281,13 @@ It uses flex-direction: column and align-items: center to stack all inputs verti
   margin-bottom: 8px;
   font-weight: bold;
 }
+
+.journal-entry-card {
+  background-color: #fdfdfd; /* Off-white like paper */
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 30px;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.05); /* Subtle shadow */
+  max-width: 600px; /* Limits width to look like a book page */
+  margin: 20px auto; /* Centers the card on the page */
+}
