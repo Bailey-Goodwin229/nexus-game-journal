@@ -19,6 +19,7 @@ const GameJournalPage = () => {
     const [editingId, setEditingId] = useState(null); // Tracks which card is being edited
     const [editData, setEditData] = useState({}); // Holds temporary change
 
+
     useEffect(() => {
         const fetchGameEntries = async () => {
             try {
@@ -45,6 +46,7 @@ const GameJournalPage = () => {
 
     if (loading) return <div>Loading the Archive...</div>;
 
+     // Delete logic
      const handleDelete = async (journalId) => {
          // A safety check to make sure you want to delete the item
          if (!window.confirm("Are you sure you would like to delete this?")) return;
@@ -57,8 +59,19 @@ const GameJournalPage = () => {
              console.error("Failed to delete entry:", err);
              alert("Could not delete the entry. Try again!");
          }
+     };
 
-     }
+     // Update logic
+     const handleUpdate = async (journalId) => {
+             try {
+                 const response = await api.put(`/journal/${journalId}`, editData);
+                 // Update the list with the new data and close edit mode
+                 setEntries(prev => prev.map(entry => entry.journalId === journalId ? response.data : entry));
+                 setEditingId(null);
+             } catch (err) {
+                 console.error("Update failed:", err);
+             }
+     };
 
     return (
         <div className="game-detail-page" style={{ padding: '20px' }}>
@@ -73,80 +86,119 @@ const GameJournalPage = () => {
                 onEntryAdded={(newEntry) => setEntries(prevEntries => [newEntry, ...prevEntries])}
             />
             <div className="entries-grid">
-                {entries.map(entry => (
-                    <div key={entry.journalId} className="game-card" style={{ padding: '30px', marginBottom: '20px', position: 'relative' }}>
-                        {/* 1. Centered Title */}
-                        <h3 style={{
-                            textAlign: 'center',
-                            marginBottom: '15px',
-                            borderBottom: '2px solid #333',
-                            paddingBottom: '10px'
-                        }}>
-                            {entry.title}
-                        </h3>
+                {entries.map(entry => {
+                    // 1. Calculate logic before returning the UI
+                    const isEditing = editingId === entry.journalId;
 
-                        {/* DATE: TOP RIGHT */}
-                        <span style={{
-                            position: 'absolute',
-                            top: '15px',
-                            right: '20px',
-                            color: '#000000',
-                            fontSize: '0.8rem',
-                            fontWeight: '500'
-                        }}>
-                            {new Date(entry.createdAt).toLocaleDateString()}
-                        </span>
-
-                        {/* 2. Left-aligned Text */}
-                        <p style={{
-                            textAlign: 'left',
-                            lineHeight: '1.6',
-                            whiteSpace: 'pre-wrap',
-                            color: '#000000',
-                            minHeight: '100px' // Ensures small notes don't look squished
-                        }}>
-                            {entry.notes}
-                        </p>
-
-                        {/* RATING: TOP LEFT */}
-                        <div style={{
-                            position: 'absolute',
-                            top: '15px',
-                            left: '20px',
-                            fontSize: '0.9rem',
-                            color: '#333',
-                            fontWeight: 'bold'
-                        }}>
-                            {[...Array(10)].map((_, index) => (
-                                <span key={index} style={{
-                                    color: index < entry.ratings ? '#ffc107' : '#e0e0e0',
-                                    fontSize: '1rem'
-                                }}>★</span>
-                            ))}
-                        </div>
-                        {/* 4. DELETE BUTTON: Bottom Right */}
-                        <button
-                            onClick={() => handleDelete(entry.journalId)}
-                            style={{
+                    // 2. Now explicitly return the UI
+                    return (
+                        <div key={entry.journalId} className="game-card"
+                             style={{padding: '30px', marginBottom: '20px', position: 'relative'}}>
+                            {/* RATING: TOP LEFT */}
+                            <div style={{
                                 position: 'absolute',
-                                bottom: '15px',
+                                top: '15px',
+                                left: '20px',
+                                fontSize: '0.9rem',
+                                color: '#333',
+                                fontWeight: 'bold'
+                            }}>
+                                {[...Array(10)].map((_, index) => (
+                                    <span key={index} style={{
+                                        color: index < entry.ratings ? '#ffc107' : '#e0e0e0',
+                                        fontSize: '1rem'
+                                    }}>★</span>
+                                ))}
+                            </div>
+                            {/* DATE: TOP RIGHT */}
+                            <span style={{
+                                position: 'absolute',
+                                top: '15px',
                                 right: '20px',
-                                background: 'none',
-                                border: 'none',
-                                color: '#ff4d4d', // Nice "alert" red
-                                cursor: 'pointer',
+                                color: '#000000',
                                 fontSize: '0.8rem',
-                                fontWeight: 'bold',
-                                opacity: '0.6',
-                                transition: 'opacity 0.2s'
-                            }}
-                            onMouseOver={(e) => e.target.style.opacity = '1'}
-                            onMouseOut={(e) => e.target.style.opacity = '0.6'}
-                        >
-                            🗑️
-                        </button>
-                    </div>
-                ))}
+                                fontWeight: '500'
+                            }}>
+                                {new Date(entry.createdAt).toLocaleDateString()}
+                            </span>
+
+                            {isEditing ? (
+                                /* Edit Mode UI */
+                                <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px'}}>
+                                    <input
+                                        value={editData.title}
+                                        onChange={(e) => setEditData({...editData, title: e.target.value})}
+                                        style={{textAlign: 'center'}}
+                                    />
+                                    <textarea
+                                        value={editData.notes}
+                                        onChange={(e) => setEditData({...editData, notes: e.target.value})}
+                                        rows={8} // Increase this number for more starting space
+                                        style={{
+                                            width: '100%',
+                                            padding: '10px',
+                                            lineHeight: '1.6',
+                                            fontSize: '1.1rem'
+                                        }}
+                                    />
+                                    <button onClick={() => handleUpdate(entry.journalId)}>Save</button>
+                                    <button onClick={() => setEditingId(null)}>Cancel</button>
+                                </div>
+                            ) : (
+                                /* View Mode UI (Your current Title & Notes) */
+                                <>
+                                    <h3 style={{textAlign: 'center'}}>{entry.title}</h3>
+                                    <p style={{
+                                        textAlign: 'left',
+                                        lineHeight: '1.6',
+                                        whiteSpace: 'pre-wrap',
+                                        color: '#000000',
+                                        minHeight: '100px'
+                                    }}>
+                                        {entry.notes}</p>
+                                    <button
+                                        onClick={() => {
+                                            setEditingId(entry.journalId);
+                                            setEditData(entry);
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            bottom: '15px',
+                                            left: '20px',
+                                            border: 'none',
+                                            background: 'none',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        ✎
+                                    </button>
+                                </>
+                            )}
+
+                            {/* 4. DELETE BUTTON: Bottom Right */}
+                            <button
+                                onClick={() => handleDelete(entry.journalId)}
+                                style={{
+                                    position: 'absolute',
+                                    bottom: '15px',
+                                    right: '20px',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#ff4d4d', // Nice "alert" red
+                                    cursor: 'pointer',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 'bold',
+                                    opacity: '0.6',
+                                    transition: 'opacity 0.2s'
+                                }}
+                                onMouseOver={(e) => e.target.style.opacity = '1'}
+                                onMouseOut={(e) => e.target.style.opacity = '0.6'}
+                            >
+                                🗑️
+                            </button>
+                        </div>
+                    );
+                })};
             </div>
         </div>
     );
