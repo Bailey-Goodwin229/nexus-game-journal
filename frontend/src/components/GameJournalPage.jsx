@@ -15,6 +15,9 @@ const GameJournalPage = () => {
     const gameData = location.state || {};
     const [entries, setEntries] = useState([]);
     const [loading, setLoading] = useState(true);
+    // Update logic
+    const [editingId, setEditingId] = useState(null); // Tracks which card is being edited
+    const [editData, setEditData] = useState({}); // Holds temporary change
 
     useEffect(() => {
         const fetchGameEntries = async () => {
