@@ -105,15 +105,30 @@ const GameJournalPage = () => {
                     </span>
                 </div>
             </div>
+            {/* --- NEW ENTRY DIVIDER --- */}
+            <div style={{ display: 'flex', alignItems: 'center', margin: '40px 0 30px 0', color: '#888' }}>
+                <div style={{ flex: 1, height: '1px', backgroundColor: '#333' }}></div>
+                <span style={{ padding: '0 20px', fontSize: '0.9rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '2px' }}>
+                New Entry
+            </span>
+                <div style={{ flex: 1, height: '1px', backgroundColor: '#333' }}></div>
+            </div>
             {/* 2. New Entry Section */}
-            <div className="add-entry-section" style={{ marginBottom: '50px', borderTop: '1px solid #333', paddingTop: '20px' }}>
-                <h2 style={{ textAlign: 'center' }}>New Journal Entry</h2>
+            <div className="add-entry-section" style={{ marginBottom: '50px' }}>
+                <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>New Journal Entry</h2>
                 <AddEntryForm
                     preselectedGame={decodeURIComponent(gameTitle)}
                     twitchId={gameData.twitchId}
                     coverArtUrl={gameData.coverArtUrl}
                     onEntryAdded={(newEntry) => setEntries(prev => [newEntry, ...prev])}
                 />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '60px 0 40px 0', color: '#888' }}>
+                <div style={{ flex: 1, height: '1px', backgroundColor: '#333' }}></div>
+                <span style={{ padding: '0 20px', fontSize: '0.9rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '2px' }}>
+                        Past Entries
+                </span>
+                <div style={{ flex: 1, height: '1px', backgroundColor: '#333' }}></div>
             </div>
             <div className="entries-grid">
                 {entries.map(entry => {
@@ -212,10 +227,9 @@ const GameJournalPage = () => {
                             </button>
                         </div>
                     );
-                })};
+                })}
             </div>
         </div>
     );
 };
-
 export default GameJournalPage;
