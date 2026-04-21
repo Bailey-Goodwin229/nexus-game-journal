@@ -19,6 +19,10 @@ const GameJournalPage = () => {
     const [editingId, setEditingId] = useState(null); // Tracks which card is being edited
     const [editData, setEditData] = useState({}); // Holds temporary change
 
+    // ✅ DERIVED STATE: This recalculates automatically whenever 'entries' changes
+    const total = entries.reduce((acc, entry) => acc + (entry.ratings || 0), 0);
+    const overallRating = entries.length > 0 ? (total / entries.length).toFixed(1) : 0;
+
 
     useEffect(() => {
         const fetchGameEntries = async () => {
@@ -33,6 +37,7 @@ const GameJournalPage = () => {
                 });
 
                 setEntries(filtered);
+                // You can save this to a new state variable:
                 setLoading(false);
             } catch (err) {
                 // Or catches and displays error message.
@@ -78,13 +83,38 @@ const GameJournalPage = () => {
             {/* A button that sends the user back to the main list. Because it’s a Link, it doesn’t reload the whole site; it just swaps the view back instantly. */}
             <Link to='/journal' style={{ color: '#00cf5d' }}>← Back to Archive</Link>
             {/* Displays the name of the game at the top of the page. */}
-            <h1>{decodeURIComponent(gameTitle)}</h1>
-            <AddEntryForm
-                preselectedGame={decodeURIComponent(gameTitle)}
-                twitchId={gameData.twitchId}
-                coverArt={gameData.coverArtUrl}
-                onEntryAdded={(newEntry) => setEntries(prevEntries => [newEntry, ...prevEntries])}
-            />
+            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                {/* The Title */}
+                <h1 style={{ marginBottom: '5px' }}>
+                    {decodeURIComponent(gameTitle)}
+                </h1>
+
+                {/* The Stars and Rating underneath */}
+                <div style={{
+                    color: '#ffc107',
+                    fontSize: '1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px'
+                }}>
+                    <span>★</span>
+                    <span style={{ fontWeight: 'bold' }}>{overallRating}/10</span>
+                    <span style={{ color: '#888', fontSize: '1rem' }}>
+            ({entries.length} {entries.length === 1 ? 'entry' : 'entries'})
+                    </span>
+                </div>
+            </div>
+            {/* 2. New Entry Section */}
+            <div className="add-entry-section" style={{ marginBottom: '50px', borderTop: '1px solid #333', paddingTop: '20px' }}>
+                <h2 style={{ textAlign: 'center' }}>New Journal Entry</h2>
+                <AddEntryForm
+                    preselectedGame={decodeURIComponent(gameTitle)}
+                    twitchId={gameData.twitchId}
+                    coverArtUrl={gameData.coverArtUrl}
+                    onEntryAdded={(newEntry) => setEntries(prev => [newEntry, ...prev])}
+                />
+            </div>
             <div className="entries-grid">
                 {entries.map(entry => {
                     // 1. Calculate logic before returning the UI
@@ -94,22 +124,6 @@ const GameJournalPage = () => {
                     return (
                         <div key={entry.journalId} className="game-card"
                              style={{padding: '30px', marginBottom: '20px', position: 'relative'}}>
-                            {/* RATING: TOP LEFT */}
-                            <div style={{
-                                position: 'absolute',
-                                top: '15px',
-                                left: '20px',
-                                fontSize: '0.9rem',
-                                color: '#333',
-                                fontWeight: 'bold'
-                            }}>
-                                {[...Array(10)].map((_, index) => (
-                                    <span key={index} style={{
-                                        color: index < entry.ratings ? '#ffc107' : '#e0e0e0',
-                                        fontSize: '1rem'
-                                    }}>★</span>
-                                ))}
-                            </div>
                             {/* DATE: TOP RIGHT */}
                             <span style={{
                                 position: 'absolute',

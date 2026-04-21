@@ -19,6 +19,4 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
     // 4. ContainingIgnoreCase -> Make it a fuzzy, case-insensitive search
     List<JournalEntry> findByGame_TitleContainingIgnoreCase(String title);
 
-
-
 }
