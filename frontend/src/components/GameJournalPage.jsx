@@ -23,32 +23,6 @@ const GameJournalPage = () => {
     const total = entries.reduce((acc, entry) => acc + (entry.ratings || 0), 0);
     const overallRating = entries.length > 0 ? (total / entries.length).toFixed(1) : 0;
 
-
-    useEffect(() => {
-        const fetchGameEntries = async () => {
-            try {
-                // You can either fetch all and filter, or hit a specific endpoint.
-                // Even though you're on a new page, it still calls the same backend endpoint to get the list of entries.
-                const response = await api.get('/journal');
-                //This is the logic that turns the "Giant List" into a "Specific List." It compares every entry's gameTitle to the one in the URL.
-                const filtered = response.data.filter(e => {
-                    const titleFromEntry = e.gameTitle || e.game?.title;
-                    return titleFromEntry === decodeURIComponent(gameTitle);
-                });
-
-                setEntries(filtered);
-                // You can save this to a new state variable:
-                setLoading(false);
-            } catch (err) {
-                // Or catches and displays error message.
-                console.error("Failed to load entries", err);
-                setLoading(false);
-            }
-        };
-        fetchGameEntries();
-        // The dependency array ensures that if you somehow navigate from one game detail page directly to another, the page will refresh with the new game's data.
-    }, [gameTitle]);
-
     if (loading) return <div>Loading the Archive...</div>;
 
      // Delete logic

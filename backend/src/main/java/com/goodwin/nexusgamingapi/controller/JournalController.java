@@ -37,6 +37,11 @@ public class JournalController {
         return ResponseEntity.ok(entries); // Shorthand for 200 OK
     }
 
+    @GetMapping("game/{gameTitle}")
+    public ResponseEntity<List<JournalResponseDTO>> getEntriesByGame(@PathVariable String gameTitle) {
+        return ResponseEntity.ok(journalService.getEntriesByGameTitle(gameTitle));
+    }
+
     // Update
     @PutMapping("/{id}")
     public ResponseEntity<JournalResponseDTO> update(@PathVariable Long id, @Valid @RequestBody JournalRequestDTO request) {
