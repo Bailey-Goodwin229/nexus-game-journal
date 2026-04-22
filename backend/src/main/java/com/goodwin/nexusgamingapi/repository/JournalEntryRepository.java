@@ -2,6 +2,8 @@ package com.goodwin.nexusgamingapi.repository;
 
 import com.goodwin.nexusgamingapi.entity.JournalEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
     // 4. ContainingIgnoreCase -> Make it a fuzzy, case-insensitive search
     List<JournalEntry> findByGame_TitleContainingIgnoreCase(String title);
 
-    // For the specific Game Room view
-    List<JournalEntry> findByGame_Title(String title);
+    // Using JPQL (Java Persistence Query Language) to be explicit
+    @Query("SELECT j FROM JournalEntry j WHERE LOWER(j.game.title) = LOWER(:title)")
+    List<JournalEntry> findByGameTitleCaseInsensitive(@Param("title") String title);
 }

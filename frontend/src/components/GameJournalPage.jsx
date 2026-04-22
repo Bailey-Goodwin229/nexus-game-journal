@@ -23,7 +23,28 @@ const GameJournalPage = () => {
     const total = entries.reduce((acc, entry) => acc + (entry.ratings || 0), 0);
     const overallRating = entries.length > 0 ? (total / entries.length).toFixed(1) : 0;
 
-    if (loading) return <div>Loading the Archive...</div>;
+    useEffect(() => {
+        const fetchGameEntries = async () => {
+            try {
+                setLoading(true);
+                // This calls your NEW backend endpoint
+                const response = await api.get(`/journal/game/${encodeURIComponent(gameTitle)}`);
+
+                // Set the entries directly from the backend response
+                setEntries(response.data);
+                setLoading(false);
+            } catch (err) {
+                console.error("Failed to load entries", err);
+                setLoading(false);
+            }
+        };
+
+        if (gameTitle) {
+            fetchGameEntries();
+        }
+    }, [gameTitle]);
+
+    if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Loading your archive...</div>;
 
      // Delete logic
      const handleDelete = async (journalId) => {

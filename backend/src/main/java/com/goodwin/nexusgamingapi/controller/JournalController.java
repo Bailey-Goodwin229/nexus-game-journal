@@ -37,7 +37,7 @@ public class JournalController {
         return ResponseEntity.ok(entries); // Shorthand for 200 OK
     }
 
-    @GetMapping("game/{gameTitle}")
+    @GetMapping("game/{gameTitle.+}")
     public ResponseEntity<List<JournalResponseDTO>> getEntriesByGame(@PathVariable String gameTitle) {
         return ResponseEntity.ok(journalService.getEntriesByGameTitle(gameTitle));
     }

@@ -72,7 +72,7 @@ public class JournalService {
     // Method that fetches a specific entry and turns it into a list
     public List<JournalResponseDTO> getEntriesByGameTitle(String gameTitle) {
         // 1. We call the specific repo method we discussed
-        return journalEntryRepository.findByGame_Title(gameTitle)
+        return journalEntryRepository.findByGameTitleCaseInsensitive(gameTitle)
                 .stream()
                 // 2. We reuse your existing mapToResponseDTO logic (Keep it DRY!)
                 .map(this::mapToResponseDTO)
