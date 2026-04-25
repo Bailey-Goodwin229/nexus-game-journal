@@ -1,5 +1,6 @@
 package com.goodwin.nexusgamingapi.config;
 
+import com.goodwin.nexusgamingapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -20,12 +22,6 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class AppConfig {
 
-    @Value("${APP_USERNAME}")
-    private String appUsername;
-
-    @Value("${APP_PASSWORD}")
-    private String appPassword;
-
     // Tells Spring to create an instance of the RestTemplate tool and keep it in the tool box so I can use it anywhere in the app
     @Bean
     public RestTemplate restTemplate(){
@@ -34,12 +30,15 @@ public class AppConfig {
 
     // Tells Spring boot who is allowed to log in before we move to the database
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername(appUsername) // declares a new user using app_Username
-                .password(appPassword) // sets the password to be appPassword
-                .authorities("USER") // gives the user and "Role" or "Level"
-                .build(); // Finalizes the identity into a UserDetails object
-        return new InMemoryUserDetailsManager(user); // returns the users memory from RAM because we aren't using database
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
+        return username -> userRepository.findByUsername(username)
+                .map(user -> org.springframework.security.core.userdetails.User
+                        .withUsername(user.getUsername())
+                        .password(user.getPassword())
+                        .authorities("USER")
+                        .build())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
     }
 
     // De-coder for passwords, tells Spring Security how to compare passwords from users to the ones in Environmental Variables
@@ -53,5 +52,4 @@ public class AppConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager(); // Takes login request and determines if it's valid
     }
-
 }
