@@ -133,15 +133,28 @@ const GameJournalPage = () => {
                     // 2. Now explicitly return the UI
                     return (
                         <div key={entry.journalId} className="game-card"
-                             style={{padding: '30px', marginBottom: '20px', position: 'relative'}}>
+                             style={{
+                                 backgroundColor: '#fff',
+                                 /* Subtle blue or gray horizontal lines only */
+                                 backgroundImage: 'linear-gradient(#e1e9f0 1px, transparent 1px)',
+                                 backgroundSize: '100% 1.8rem', // This defines the "row height"
+                                 padding: '40px',
+                                 position: 'relative',
+                                 marginBottom: '25px',
+                                 border: '1px solid #efefef',
+                                 borderRadius: '4px',
+                                 boxShadow: '0 4px 6px rgba(0,0,0,0.02)', // Very soft shadow
+                                 minHeight: '150px'
+                                }}
+                                >
                             {/* DATE: TOP RIGHT */}
                             <span style={{
                                 position: 'absolute',
                                 top: '15px',
                                 right: '20px',
-                                color: '#000000',
-                                fontSize: '0.8rem',
-                                fontWeight: '500'
+                                color: '#999',
+                                fontSize: '0.75rem',
+                                fontStyle: 'italic'
                             }}>
                                 {new Date(entry.createdAt).toLocaleDateString()}
                             </span>
@@ -171,13 +184,22 @@ const GameJournalPage = () => {
                             ) : (
                                 /* View Mode UI (Your current Title & Notes) */
                                 <>
-                                    <h3 style={{textAlign: 'center'}}>{entry.title}</h3>
+                                    <h3 style={{
+                                        marginTop: '0',
+                                        marginBottom: '1.8rem', // Exactly one "line" of space
+                                        color: '#333',
+                                        fontSize: '1.2rem',
+                                        fontWeight: '600'
+                                    }}
+                                    >
+                                        {entry.title}</h3>
                                     <p style={{
                                         textAlign: 'left',
-                                        lineHeight: '1.6',
+                                        lineHeight: '1.8rem', // MUST match backgroundSize exactly
+                                        color: '#555',
+                                        margin: '0',
                                         whiteSpace: 'pre-wrap',
-                                        color: '#000000',
-                                        minHeight: '100px'
+                                        fontSize: '1rem'
                                     }}>
                                         {entry.notes}</p>
                                     <button

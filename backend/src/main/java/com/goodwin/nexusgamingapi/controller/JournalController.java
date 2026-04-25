@@ -37,9 +37,15 @@ public class JournalController {
         return ResponseEntity.ok(entries); // Shorthand for 200 OK
     }
 
-    @GetMapping("game/{gameTitle.+}")
+    @GetMapping("game/{*gameTitle}")
     public ResponseEntity<List<JournalResponseDTO>> getEntriesByGame(@PathVariable String gameTitle) {
-        return ResponseEntity.ok(journalService.getEntriesByGameTitle(gameTitle));
+        // 1. Clean the title: remove the leading slash if it exists
+        String cleanTitle = (gameTitle != null && gameTitle.startsWith("/"))
+                ? gameTitle.substring(1)
+                : gameTitle;
+        // 2. Use the cleaned title for your service call
+        List<JournalResponseDTO> entries = journalService.getEntriesByGameTitle(cleanTitle);
+        return ResponseEntity.ok(entries);
     }
 
     // Update
