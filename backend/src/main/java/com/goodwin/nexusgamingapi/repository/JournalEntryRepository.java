@@ -14,14 +14,14 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
     // Returns items by the latest item added
     List<JournalEntry> findAllByOrderByCreatedAtDesc();
 
-    // Query
-    // 1. FindBy -> standard JPA start
-    // 2. Game -> looks at game entity inside journal
-    // 3. _Title -> Looks at the title field inside the game
-    // 4. ContainingIgnoreCase -> Make it a fuzzy, case-insensitive search
-    List<JournalEntry> findByGame_TitleContainingIgnoreCase(String title);
+    // This tells Spring:
+    // 1. Find entries
+    // 2. Look inside the 'user' object for the 'username'
+    // 3. Sort by the 'createdAt' field in descending order
+    List<JournalEntry> findByUser_UsernameOrderByCreatedAtDesc(String username);
 
-    // Using JPQL (Java Persistence Query Language) to be explicit
-    @Query("SELECT j FROM JournalEntry j WHERE LOWER(j.game.title) = LOWER(:title)")
-    List<JournalEntry> findByGameTitleCaseInsensitive(@Param("title") String title);
+    List<JournalEntry> findByUser_UsernameAndGame_TitleIgnoreCase(String username, String gameTitle);
+
+    // Finds entries for a specific user where the game title contains the search string
+    List<JournalEntry> findByUser_UsernameAndGame_TitleContainingIgnoreCase(String username, String title);
 }

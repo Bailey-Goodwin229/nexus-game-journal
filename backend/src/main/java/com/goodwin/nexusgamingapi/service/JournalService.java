@@ -4,9 +4,12 @@ import com.goodwin.nexusgamingapi.dto.JournalRequestDTO;
 import com.goodwin.nexusgamingapi.dto.JournalResponseDTO;
 import com.goodwin.nexusgamingapi.entity.Game;
 import com.goodwin.nexusgamingapi.entity.JournalEntry;
+import com.goodwin.nexusgamingapi.entity.User;
 import com.goodwin.nexusgamingapi.repository.GameRepository;
 import com.goodwin.nexusgamingapi.repository.JournalEntryRepository;
+import com.goodwin.nexusgamingapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,12 +23,21 @@ public class JournalService {
     // Call repositories
     private final JournalEntryRepository journalEntryRepository;
     private final GameRepository gameRepository;
+    private final UserRepository userRepository;
 
     public JournalResponseDTO createEntry(JournalRequestDTO request){
 
         // Finds the game
         Game game = gameRepository.findByTitle(request.gameTitle())
                 .orElseThrow(() -> new RuntimeException("Could not find game with Twitch ID: " + request.gameTitle()));
+
+        // Grab the logged-in user's name from Spring Security
+        String currentUsername = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getName();
+
+        // Find the User object in your database
+        User currentUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found!" + currentUsername));
 
         // Creates the "Paper" for the journal
         JournalEntry entry = new JournalEntry();
@@ -39,6 +51,8 @@ public class JournalService {
         // Tell the entry which game it belongs to
         entry.setGame(game);
 
+        // LINK THE USER HERE
+        entry.setUser(currentUser);
 
         // Save, tells repository to put it into the database
         JournalEntry savedEntry = journalEntryRepository.save(entry);
@@ -63,7 +77,11 @@ public class JournalService {
 
     // Method that fetches entries from database and turns them into a list
     public List<JournalResponseDTO> getAllJournalEntries(){
-        return journalEntryRepository.findAllByOrderByCreatedAtDesc()
+        String currentUsername = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getName();
+
+        // You'll need to add findByUser_UsernameOrderByCreatedAtDesc to your Repository!
+        return journalEntryRepository.findByUser_UsernameOrderByCreatedAtDesc(currentUsername)
                 .stream()
                 .map(this::mapToResponseDTO)
                 .toList();
@@ -71,10 +89,11 @@ public class JournalService {
 
     // Method that fetches a specific entry and turns it into a list
     public List<JournalResponseDTO> getEntriesByGameTitle(String gameTitle) {
-        // 1. We call the specific repo method we discussed
-        return journalEntryRepository.findByGameTitleCaseInsensitive(gameTitle)
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // You'll need to add this method to your Repo too!
+        return journalEntryRepository.findByUser_UsernameAndGame_TitleIgnoreCase(currentUsername, gameTitle)
                 .stream()
-                // 2. We reuse your existing mapToResponseDTO logic (Keep it DRY!)
                 .map(this::mapToResponseDTO)
                 .toList();
     }
@@ -100,6 +119,10 @@ public class JournalService {
         // Tell the entry which game it belongs to
         entry.setGame(game);
 
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+        entry.setUser(currentUser);
 
         // Save, tells repository to put it into the database
         JournalEntry updatedEntry = journalEntryRepository.save(entry);
@@ -121,7 +144,12 @@ public class JournalService {
 
     // Returns a list of games using JournalRepository that user searches, shows them results.
     public List<JournalResponseDTO> searchByGameTitle(String title){
-        return journalEntryRepository.findByGame_TitleContainingIgnoreCase(title)
+        // 1. Get the current logged-in user
+        String currentUsername = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication().getName();
+
+        // 2. Search ONLY this user's entries
+        return journalEntryRepository.findByUser_UsernameAndGame_TitleContainingIgnoreCase(currentUsername, title)
                 .stream()
                 .map(this::mapToResponseDTO)
                 .toList();

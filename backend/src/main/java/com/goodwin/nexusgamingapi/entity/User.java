@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -20,6 +23,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // Tomorrow we can add a list of JournalEntries here to link them!
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<JournalEntry> entries = new ArrayList<>();
 
 }
