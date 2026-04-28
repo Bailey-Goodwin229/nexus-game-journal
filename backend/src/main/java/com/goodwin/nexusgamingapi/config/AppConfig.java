@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -21,6 +22,12 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @RequiredArgsConstructor
 public class AppConfig {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // BCrypt uses salt and multiple hashing rounds for security
+        return new BCryptPasswordEncoder();
+    }
 
     // Tells Spring to create an instance of the RestTemplate tool and keep it in the tool box so I can use it anywhere in the app
     @Bean
@@ -39,12 +46,6 @@ public class AppConfig {
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-    }
-
-    // De-coder for passwords, tells Spring Security how to compare passwords from users to the ones in Environmental Variables
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();// Get single Instance of plain text
     }
 
     // Decision maker who actually checks the ID
