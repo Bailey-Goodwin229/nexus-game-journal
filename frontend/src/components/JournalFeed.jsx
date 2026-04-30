@@ -41,6 +41,12 @@ const JournalFeed = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Logout Logic
+    const handleLogout = () => {
+        localStorage.removeItem('token'); // Clears the keycard
+        navigate('/login'); // Send user back to the gate
+    };
+
     useEffect(() => {
         if (searchTerm.length < 3) {
             setSearchResults([]);
@@ -90,8 +96,13 @@ const JournalFeed = () => {
 
     return (
         <div className="journal-feed">
+            <div>
+                <button onClick={handleLogout} className="nav-tab logout-btn">
+                    Close Journal
+                </button>
+            </div>
             <h1>Your Gaming Archive</h1>
-            {/* NEW: Navigation Search Section */}
+            {/* Navigation Search Section */}
             <div className="search-section">
                 <input
                     type="text"

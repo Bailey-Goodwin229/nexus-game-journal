@@ -291,3 +291,29 @@ It uses flex-direction: column and align-items: center to stack all inputs verti
   max-width: 600px; /* Limits width to look like a book page */
   margin: 20px auto; /* Centers the card on the page */
 }
+
+/* Shared styling for your Navigation "Tabs" */
+.nav-tab {
+  position: fixed;
+  top: 20px;
+  z-index: 1000;
+  padding: 10px 15px;
+  font-family: 'cursive';
+  font-size: 16px;
+  color: black !important;          /* Sharp black ink text */   /* Diary paper color */
+  border: 2px solid black;         /* Thick black border */
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  text-decoration: none !important; /* Removes underlines */
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.nav-tab:hover {
+  transform: translateY(-2px); /* Same lift effect as your deploy button */
+  background-color: #ede0c1;   /* Slight darken on hover */
+}
+
+/* Specific placements */
+.logout-btn { right: 20px; }
+.back-btn { left: 20px; }

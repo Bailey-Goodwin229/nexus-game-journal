@@ -76,7 +76,9 @@ const GameJournalPage = () => {
     return (
         <div className="game-detail-page" style={{ padding: '20px' }}>
             {/* A button that sends the user back to the main list. Because it’s a Link, it doesn’t reload the whole site; it just swaps the view back instantly. */}
-            <Link to='/journal' style={{ color: '#00cf5d' }}>← Back to Archive</Link>
+            <Link to='/journal' className="nav-tab back-btn">
+            Back to Archive
+            </Link>
             {/* Displays the name of the game at the top of the page. */}
             <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                 {/* The Title */}
