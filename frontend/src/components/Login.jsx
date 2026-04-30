@@ -43,6 +43,7 @@ const Login = () => {
                 />
                 {/* In a form, the 'submit' type automatically triggers the 'onSubmit' handler in the <form> tag above */}
                 <button type="submit">Unlock Journal</button>
+                <p>New to the journal? <a href="/register">Sign the Guestbook</a></p>
             </form>
         </div>
     );

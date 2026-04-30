@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/Login'; // Brings information from Login into the app
 import JournalFeed from './components/JournalFeed'; // Brings information from JournalFeed into the app
 import GameJournalPage from './components/GameJournalPage'; // Brings information from GameJournalPage into the app
+import Register from './components/Register';
 
 // 1. The "GateKeeper" (Guard)
 // This functions checks the "Keycard" (token) before letting someone through the door.
@@ -17,32 +18,14 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-              {/* Public Route: Anyone can see the login page */}
-            <Route path="/login" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-              {/* 2. PROTECTED ROUTE: The Journal Feed */}
-              {/* We wrap the component inside our Guard. */}
-            <Route
-                path="/journal"
-                element={
-                    <ProtectRoute>
-                        <JournalFeed />
-                    </ProtectRoute>
-                }
-            />
+              {/* Protected routes */}
+              <Route path="/journal" element={<ProtectRoute><JournalFeed /></ProtectRoute>} />
+              <Route path="/journal/:gameTitle" element={<ProtectRoute><GameJournalPage /></ProtectRoute>} />
 
-              {/* Protected route for individual game pages */}
-              <Route
-                  path="/journal/:gameTitle"
-                  element={
-                  <ProtectRoute>
-                      <GameJournalPage />
-                  </ProtectRoute>
-                  }
-                  />
-
-              {/* Redirect the root '/' to '/journal'*/}
-                  {/* The Guard will catch them if they aren't logged in! */}
+              {/* ONE redirect for the root path - this sends guests to login and users to journal */}
               <Route path="/" element={<Navigate to="/journal" />} />
           </Routes>
         </div>
