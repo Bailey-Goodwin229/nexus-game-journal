@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -27,6 +29,10 @@ const Register = () => {
             // 3. Store the JWT token and redirect/alert
             localStorage.setItem('token', response.data.token);
             alert("Journal Created! Welcome to Nexus Gaming");
+
+            // This sends them to the Journal Feed immediately after registration
+            navigate('/journal');
+
         } catch (err) {
             console.error(err);
             alert("Registration failed.");
