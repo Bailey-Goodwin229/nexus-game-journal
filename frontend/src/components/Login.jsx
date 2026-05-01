@@ -16,7 +16,8 @@ const Login = () => {
             await login(credentials.username, credentials.password);
             navigate('/journal'); // Success! Send them to the feed
         } catch (err) {
-            setError('Invalid username or password. Check your .env variables!');
+            const errorMessage = err.response?.data?.error || "A connection error occurred.";
+            alert(errorMessage);
         }
     };
 

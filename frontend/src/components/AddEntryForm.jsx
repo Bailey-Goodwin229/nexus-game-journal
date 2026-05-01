@@ -44,9 +44,12 @@ const AddEntryForm = ({ onEntryAdded, preselectedGame, twitchId, coverArtUrl }) 
 
             // Tell the parent (JournalFeed) to refresh the list!
             onEntryAdded(response.data);
+            setErrors({}); // Clear errors on success
         } catch (err) {
-            console.error("Failed to add entry:", err);
-            alert("Error saving your entry. Check the console!");
+            if (err.response && err.response.status === 400) {
+                // This grabs the Map of field errors from your GlobalExceptionHandler
+                setErrors(err.response.data);
+            }
         }
     };
 

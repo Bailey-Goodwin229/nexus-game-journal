@@ -34,8 +34,12 @@ const Register = () => {
             navigate('/journal');
 
         } catch (err) {
-            console.error(err);
-            alert("Registration failed.");
+            if (err.response && err.response.status === 409) {
+                // This pulls the "That alias is already in the archive" message
+                alert(err.response.data.error);
+            } else {
+                alert("The ink is dry. Could not register at this time.");
+            }
         }
     };
 
