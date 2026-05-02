@@ -1,6 +1,8 @@
 package com.goodwin.nexusgamingapi.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,4 +59,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
+    // Global check for game page that doesn't exist
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNotFound(EntityNotFoundException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "The archives are incomplete! This entry seems to have been erased.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error); // 404 Not Found
+    }
+
+    // Catch when a user tries to touch an entry that doesn't belong to them
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAccessDenied(AccessDeniedException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "You don't have permission to edit this person's journal!");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    // Catch when trying to update/delete a non-existent ID
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity<Map<String, String>> handleEmptyResult(EmptyResultDataAccessException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "The entry you're looking for has already been erased.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 }

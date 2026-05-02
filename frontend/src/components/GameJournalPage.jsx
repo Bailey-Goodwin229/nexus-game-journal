@@ -34,8 +34,11 @@ const GameJournalPage = () => {
                 setEntries(response.data);
                 setLoading(false);
             } catch (err) {
-                console.error("Failed to load entries", err);
-                setLoading(false);
+                if (err.response?.status === 404) {
+                    setError("This chapter of the journal hasn't been written yet.");
+                } else {
+                    setError("The ink is blurry. Could not load these entries.")
+                }
             }
         };
 
@@ -56,8 +59,10 @@ const GameJournalPage = () => {
              // Update the UI: Filter out the deleted entry so it disappears immediately
              setEntries(prevEntries => prevEntries.filter(entry => entry.journalId !== journalId));
          } catch (err) {
-             console.error("Failed to delete entry:", err);
-             alert("Could not delete the entry. Try again!");
+             const msg = err.response?.status == 403
+                ? "You cannot erase another player's entries!"
+                 : "The ink is stubborn. Could not delete the entry.";
+             alert(msg);
          }
      };
 
@@ -69,7 +74,12 @@ const GameJournalPage = () => {
                  setEntries(prev => prev.map(entry => entry.journalId === journalId ? response.data : entry));
                  setEditingId(null);
              } catch (err) {
-                 console.error("Update failed:", err);
+                 if (err.response?.status === 400) {
+                     // This handles validation errors (e.g., thoughts were too short)
+                     alert(err.response.data.error || "The correction is invalid.");
+                 } else {
+                     alert("Could not rewrite history at this time.");
+                 }
              }
      };
 
