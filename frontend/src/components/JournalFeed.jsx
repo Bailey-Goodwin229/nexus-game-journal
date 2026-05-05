@@ -106,7 +106,7 @@ const JournalFeed = () => {
 
     if (loading) return <div className="nexus-loader">Scanning The Nexus...</div>;
     if (error) return (
-        <div className"nexus-error" style={{ textAlign: 'center', marginTop: '50px' }}>
+        <div className="nexus-error" style={{ textAlign: 'center', marginTop: '50px' }}>
             <h2 style={{ fontFamily: 'cursive' }}>⚠️ Entry Blocked</h2>
             <p>{error}</p>
             <button

@@ -52,6 +52,18 @@ const Register = () => {
                 <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#555' }}>
                     Sign the guestbook to start your journey.
                 </p>
+                <button
+                    onClick={() => navigate('/login')}
+                    className="nav-tab pos-left"
+                    style={{
+                        position: 'fixed',
+                        top: '20px',
+                        left: '20px',
+                        zIndex: 1000
+                    }}
+                >
+                    Back to Login
+                </button>
 
                 <form onSubmit={handleRegister} className={"register-form"}>
                     <div className="input-group">
