@@ -1,23 +1,35 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
+
 
 const Login = () => {
     // 'useState' is how we create variables that "refresh" the HTML when they change.
     const [credentials, setCredentials] = useState({ username: '', password: '' })
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { refreshUser } = useAuth(); // 2. Grab the refresh function
 
     // Controller method
     const handleSubmit = async (e) => {
         e.preventDefault();
         // trys to log in using credentials
+        setError(''); // Clear previous errors
+
         try {
+            // 3. Log in (sets the cookie in the browser)
             await login(credentials.username, credentials.password);
-            navigate('/journal'); // Success! Send them to the feed
+
+            // 4. CRITICAL: Tell the AuthContext to go fetch the user info
+            await refreshUser();
+
+            // 5. Now navigate
+            navigate('/journal');
         } catch (err) {
-            const errorMessage = err.response?.data?.error || "A connection error occurred.";
-            alert(errorMessage);
+            // Use your 'error' state for the UI instead of alert
+            const errorMessage = err.response?.data || "Incorrect username or password.";
+            setError(errorMessage);
         }
     };
 

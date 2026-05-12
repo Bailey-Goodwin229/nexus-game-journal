@@ -41,29 +41,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Enable CORS using our Bean
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
-                // 1. disable CSRF (Standard for stateless REST APIs)
-                // Use the method reference to disable CSRF
                 .csrf(AbstractHttpConfigurer::disable)
-
-                // 2. Define the "Rules of the road"
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Makes login station public
-                        .requestMatchers("/api/journal/search/**").permitAll() // Public: Anyone can search
-                        .anyRequest().authenticated()                          // Private: Everything else needs a login
+                        // 1. Allow the error path so we can see real error messages
+                        .requestMatchers("/error/**").permitAll()
+                        // 2. Allow pre-flight OPTIONS requests (crucial for 'withCredentials')
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/journal/search/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-
-                // Switch to Stateless (No more Cookies!)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
-                //  Put our Guard at the very front of the line
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build(); // Squishes all the rules into a security chain for spring to use and enforce.
+        return http.build();
     }
 
     // This bean defines the "rules of engagement" for browsers. Tells the backend to trust your React development server and allow the Authorization header.
@@ -82,6 +76,9 @@ public class SecurityConfig {
 
         // 4. Allows for credentials if I wanted to use cookies
         configuration.setAllowCredentials(true);
+
+        // 5. Allows the frontend to receive the Set-Cookie header
+        configuration.setExposedHeaders(List.of("Set-Cookie"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

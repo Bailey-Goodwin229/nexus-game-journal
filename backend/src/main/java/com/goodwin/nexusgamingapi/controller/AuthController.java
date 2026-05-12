@@ -5,7 +5,10 @@ import com.goodwin.nexusgamingapi.dto.LoginRequestDTO;
 import com.goodwin.nexusgamingapi.entity.User;
 import com.goodwin.nexusgamingapi.repository.UserRepository;
 import com.goodwin.nexusgamingapi.service.JwtService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,36 +23,63 @@ import java.util.Map;
 public class AuthController {
 
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager; // Security boss
+    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-
-        // 1. Encode the raw password from the frontend
+    public ResponseEntity<?> register(@RequestBody User user, HttpServletResponse response) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // 2. Save the user with the hashed password
         userRepository.save(user);
 
-        // 3. Auto-login by returning a token immediately
         String token = jwtService.generateToken(user.getUsername());
-        return ResponseEntity.ok(new AuthResponseDTO(token, user.getUsername()));
+        ResponseCookie cookie = createTokenCookie(token, 24 * 60 * 60); // 24 hours
 
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body("User registered and logged in: " + user.getUsername());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO request){
-        // 1. Ask spring security to verify credentials
+    public ResponseEntity<String> login(@RequestBody LoginRequestDTO request, HttpServletResponse response) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
 
-        // 2. If we reach the line, login was a success! Mint token.
         String token = jwtService.generateToken(request.username());
+        ResponseCookie cookie = createTokenCookie(token, 24 * 60 * 60); // 24 hours
 
-        // return token with a response
-        return ResponseEntity.ok(new AuthResponseDTO(token, request.username()));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body("Authenticated: " + request.username());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(org.springframework.security.core.Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("Not authenticated");
+        }
+        return ResponseEntity.ok(authentication.getName());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        // Pass 0 to completely purge the cookie using the exact same configuration blueprint
+        ResponseCookie cookie = createTokenCookie("", 0);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body("Logged out successfully");
+    }
+
+    // Senior Strategy: Single-source of truth for cookie construction
+    private ResponseCookie createTokenCookie(String token, long maxAgeInSeconds) {
+        return ResponseCookie.from("nexus_token", token)
+                .httpOnly(true)
+                .secure(false) // Set to true in Production with HTTPS
+                .path("/")
+                .maxAge(maxAgeInSeconds)
+                .sameSite("Lax") // Enforced for matching registration, login, and logout handshakes
+                .build();
     }
 }

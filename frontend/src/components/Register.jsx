@@ -1,42 +1,39 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
 
 const Register = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        username: '',
-        password: '',
-        confirmPassword: ''
-    });
+    const { refreshUser } = useAuth(); // Grab the refresh function
+    const [formData, setFormData] = useState({ username: '', password: '', confirmPassword: '' });
 
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        // 1. Client-side "Confirm Password" check
         if (formData.password !== formData.confirmPassword) {
             alert("Passwords do not match.");
             return;
         }
 
         try {
-            // 2. Send only username and password to the backend
-            const response = await axios.post('http://localhost:8080/api/auth/register', {
+            // 1. Use the 'api' instance so 'withCredentials: true' is sent
+            // This ensures the browser accepts the Set-Cookie header from Spring
+            await api.post('/auth/register', {
                 username: formData.username,
                 password: formData.password
             });
 
-            // 3. Store the JWT token and redirect/alert
-            localStorage.setItem('token', response.data.token);
-            alert("Journal Created! Welcome to Nexus Gaming");
+            // 2. Sync the React state with the new cookie
+            await refreshUser();
 
-            // This sends them to the Journal Feed immediately after registration
+            alert("Journal Created! Welcome to Nexus Gaming");
             navigate('/journal');
 
         } catch (err) {
             if (err.response && err.response.status === 409) {
-                // This pulls the "That alias is already in the archive" message
-                alert(err.response.data.error);
+                alert(err.response.data || "That alias is already in the archive.");
             } else {
                 alert("The ink is dry. Could not register at this time.");
             }
