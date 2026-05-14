@@ -1,0 +1,39 @@
+services:
+  # 1. define the Spring Boot Web Service
+  - type: web
+    name: nexus-gaming-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: "8080"
+      # Database Connections (Injected dynamically)
+      - key: DB_HOST
+        value: mysql-db-host-placeholder
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        value: nexus_gaming
+      - key: DB_USERNAME
+        value: root
+      - key: DB_ROOT_PASSWORD
+        generateValue: true # Render will automatically generate a secure password
+
+      # Twitch API Access
+      - key: TWITCH_CLIENT_ID
+        sync: false # Tells Render to let you type this manually in the dashboard
+      - key: TWITCH_CLIENT_SECRET
+        sync: false
+      - key: TWITCH_URL
+        value: twitch.tv
+      - key: TWITCH_API_URL
+        value: igdb.com
+        
+        # Security System Identity
+      - key: APP_USERNAME
+        value: bailey
+      - key: APP_PASSWORD
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true # Generates a secure, random 256-bit key for production encryption

@@ -76,7 +76,7 @@ public class AuthController {
     private ResponseCookie createTokenCookie(String token, long maxAgeInSeconds) {
         return ResponseCookie.from("nexus_token", token)
                 .httpOnly(true)
-                .secure(false) // Set to true in Production with HTTPS
+                .secure(true) // Set to true in Production with HTTPS
                 .path("/")
                 .maxAge(maxAgeInSeconds)
                 .sameSite("Lax") // Enforced for matching registration, login, and logout handshakes
