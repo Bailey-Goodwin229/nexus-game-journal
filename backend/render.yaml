@@ -3,7 +3,7 @@ services:
   - type: web
     name: nexus-gaming-api
     runtime: docker
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./backend/Dockerfile
     plan: free
     envVars:
       - key: PORT
