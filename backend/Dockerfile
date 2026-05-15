@@ -3,8 +3,8 @@ FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Copy the pom.xml and source code directly to avoid copying unwanted local files
-COPY pom.xml .
-COPY src ./src
+COPY backend/pom.xml .
+COPY backend/src ./src
 
 # Package the application skipping unit tests for deployment speed
 RUN mvn clean package -DskipTests
