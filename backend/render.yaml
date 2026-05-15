@@ -8,17 +8,14 @@ services:
     envVars:
       - key: PORT
         value: "8080"
-      # Database Connections (Injected dynamically)
-      - key: DB_HOST
-        value: mysql-db-host-placeholder
-      - key: DB_PORT
-        value: "3306"
-      - key: DB_NAME
-        value: nexus_gaming
-      - key: DB_USERNAME
-        value: root
-      - key: DB_ROOT_PASSWORD
-        generateValue: true # Render will automatically generate a secure password
+
+      # Cloud Database Properties (Aiven MySQL Integration)
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:mysql://://aivencloud.com
+      - key: SPRING_DATASOURCE_USERNAME
+        value: avnadmin
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false # Render will prompt you to safely paste your secret Aiven password in the dashboard
 
       # Twitch API Access
       - key: TWITCH_CLIENT_ID
