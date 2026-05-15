@@ -23,7 +23,7 @@ services:
       - key: TWITCH_CLIENT_SECRET
         sync: false
       - key: TWITCH_URL
-        value: twitch.tv
+        value: TWITCH_URL=https://id.twitch.tv/oauth2/token
       - key: TWITCH_API_URL
         value: igdb.com
         
