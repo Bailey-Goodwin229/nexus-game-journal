@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://nexus-gaming-api.onrender.com"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
     }
   ]
 }
