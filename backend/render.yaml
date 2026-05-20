@@ -1,5 +1,5 @@
 services:
-  # 1. define the Spring Boot Web Service
+  # 1. Define the Spring Boot Web Service
   - type: web
     name: nexus-gaming-api
     runtime: docker
@@ -9,28 +9,28 @@ services:
       - key: PORT
         value: "8080"
 
-      # Cloud Database Properties (Aiven MySQL Integration)
+      # Fixed Cloud Database Properties
       - key: SPRING_DATASOURCE_URL
         value: jdbc:mysql://://aivencloud.com
       - key: SPRING_DATASOURCE_USERNAME
         value: avnadmin
       - key: SPRING_DATASOURCE_PASSWORD
-        sync: false # Render will prompt you to safely paste your secret Aiven password in the dashboard
+        sync: false
 
-      # Twitch API Access
+      # Fixed Twitch API Access
       - key: TWITCH_CLIENT_ID
-        sync: false # Tells Render to let you type this manually in the dashboard
+        sync: false
       - key: TWITCH_CLIENT_SECRET
         sync: false
       - key: TWITCH_URL
-        value: TWITCH_URL=https://id.twitch.tv/oauth2/token
+        value: https://id.twitch.tv/oauth2/token
       - key: TWITCH_API_URL
-        value: igdb.com
-        
-        # Security System Identity
+        value: https://igdb.com
+
+      # Security System Identity
       - key: APP_USERNAME
         value: bailey
       - key: APP_PASSWORD
         sync: false
       - key: JWT_SECRET_KEY
-        generateValue: true # Generates a secure, random 256-bit key for production encryption
+        generateValue: true
