@@ -9,7 +9,7 @@ services:
       - key: PORT
         value: "8080"
 
-      # Fixed Cloud Database Properties
+      # Cloud Database Properties
       - key: SPRING_DATASOURCE_URL
         value: jdbc:mysql://://aivencloud.com
       - key: SPRING_DATASOURCE_USERNAME
@@ -17,7 +17,7 @@ services:
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
 
-      # Fixed Twitch API Access
+      # Twitch API Access
       - key: TWITCH_CLIENT_ID
         sync: false
       - key: TWITCH_CLIENT_SECRET
