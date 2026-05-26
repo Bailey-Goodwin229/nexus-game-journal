@@ -69,7 +69,9 @@ public class SecurityConfig {
         // 1. ADD YOUR VERCEL URL HERE (Keep localhost so you can still test locally!)
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "nexus-game-journal.vercel.app" // <-- Replace with your real Vercel URL
+                "nexus-game-journal.vercel.app",
+                "https://*.vercel.app",                                // Allows all Vercel preview deploys
+                "https://nexus-game-journal-*-bailey-goodwin-s-projects.vercel.app" // Tailored exact match fallback
         ));
 
         // 2. Define the methods: Allow all the standard CRUD operations
