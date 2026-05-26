@@ -66,7 +66,11 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 1. Define the origin: The Vite/React dev server
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        // 1. ADD YOUR VERCEL URL HERE (Keep localhost so you can still test locally!)
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "nexus-game-journal.vercel.app" // <-- Replace with your real Vercel URL
+        ));
 
         // 2. Define the methods: Allow all the standard CRUD operations
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
