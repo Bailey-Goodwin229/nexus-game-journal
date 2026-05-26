@@ -8,7 +8,9 @@ It’s like a "security checkpoint" that every single communication between your
 // Create an 'instance'
 const api = axios.create({
     // Gets the URL from our .env file.
-    baseURL: import.meta.env.VITE_API_BASEURL || 'http://localhost:8080/api',
+    baseURL: import.meta.env.VITE_API_BASE_URL
+        ? `${import.meta.env.VITE_API_BASE_URL}/api`
+        : 'http://localhost:8080/api',
     withCredentials: true,
 });
 
