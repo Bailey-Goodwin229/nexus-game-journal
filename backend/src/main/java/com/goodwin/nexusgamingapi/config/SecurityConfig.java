@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -41,12 +42,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 1. Force the high-priority CORS filter to run first
+                .addFilterBefore(corsFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Allow the error path so we can see real error messages
                         .requestMatchers("/error/**").permitAll()
-                        // 2. Allow pre-flight OPTIONS requests (crucial for 'withCredentials')
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/journal/search/**").permitAll()
@@ -60,35 +60,27 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // This bean defines the "rules of engagement" for browsers. Tells the backend to trust your React development server and allow the Authorization header.
+    // 2. Change this from CorsConfigurationSource to a full CorsFilter Bean
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
+    public CorsFilter corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 1. Define the origin: The Vite/React dev server
-        // 1. ADD YOUR VERCEL URL HERE (Keep localhost so you can still test locally!)
-        configuration.setAllowedOrigins(List.of(
+        // This pattern captures every unique Vercel preview domain URL perfectly
+        configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:5173",
-                "nexus-game-journal.vercel.app",
-                "https://*.vercel.app",                                // Allows all Vercel preview deploys
-                "https://nexus-game-journal-*-bailey-goodwin-s-projects.vercel.app" // Tailored exact match fallback
+                "https://*.vercel.app",
+                "https://nexus-game-journal-*-bailey-goodwin-s-projects.vercel.app"
         ));
 
-        // 2. Define the methods: Allow all the standard CRUD operations
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // 3. Define the headers: Crucial to allow authorization for our JWT
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-
-        // 4. Allows for credentials if I wanted to use cookies
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept"));
         configuration.setAllowCredentials(true);
-
-        // 5. Allows the frontend to receive the Set-Cookie header
         configuration.setExposedHeaders(List.of("Set-Cookie"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-        return source;
+
+        return new CorsFilter(source);
     }
 }
 
