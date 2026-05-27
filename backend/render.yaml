@@ -20,12 +20,11 @@ services:
     name: nexus-gaming-api
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
-    context: .
     plan: free
     envVars:
       - key: PORT
         value: "8080"
-      # FIXED: Points directly to the private internal database container service above
+      # Points directly to the private internal database container service above
       - key: SPRING_DATASOURCE_URL
         value: jdbc:mysql://nexus-gaming-db:3306/nexus_gaming?allowPublicKeyRetrieval=true&useSSL=false
       - key: SPRING_DATASOURCE_USERNAME
