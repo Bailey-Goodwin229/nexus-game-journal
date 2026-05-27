@@ -1,33 +1,47 @@
 services:
-  # 1. Define the Spring Boot Web Service
+  # 1. Free Isolated MySQL Database Container
+  - type: web
+    name: nexus-gaming-db
+    runtime: docker
+    repo: https://github.com
+    plan: free
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        value: Sharingan1!
+      - key: MYSQL_DATABASE
+        value: nexus_gaming
+      - key: MYSQL_USER
+        value: avnadmin
+      - key: MYSQL_PASSWORD
+        value: Sharingan1!
+
+  # 2. Your Spring Boot API Service
   - type: web
     name: nexus-gaming-api
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
+    context: .
     plan: free
     envVars:
       - key: PORT
         value: "8080"
-
-      # Cloud Database Properties
+      # FIXED: Points directly to the private internal database container service above
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:mysql://://aivencloud.com
+        value: jdbc:mysql://nexus-gaming-db:3306/nexus_gaming?allowPublicKeyRetrieval=true&useSSL=false
       - key: SPRING_DATASOURCE_USERNAME
         value: avnadmin
       - key: SPRING_DATASOURCE_PASSWORD
-        sync: false
-
-      # Twitch API Access
+        value: Sharingan1!
+      # Twitch API Context Mapping
       - key: TWITCH_CLIENT_ID
         sync: false
       - key: TWITCH_CLIENT_SECRET
         sync: false
       - key: TWITCH_URL
-        value: https://id.twitch.tv/oauth2/token
+        value: https://twitch.tv
       - key: TWITCH_API_URL
         value: https://igdb.com
-
-      # Security System Identity
+      # Security Credentials Layer
       - key: APP_USERNAME
         value: bailey
       - key: APP_PASSWORD
