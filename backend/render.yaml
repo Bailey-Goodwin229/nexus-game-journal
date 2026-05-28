@@ -2,7 +2,7 @@ services:
   # 1. Free Isolated MySQL Database Container
   - type: web
     name: nexus-gaming-db
-    runtime: docker
+    runtime: image
     image:
       url: mysql:8.0
     plan: free
