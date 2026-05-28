@@ -1,6 +1,6 @@
 services:
   # 1. Free Isolated MySQL Database Container
-  - type: web
+  - type: worker
     name: nexus-gaming-db
     runtime: image
     image:
