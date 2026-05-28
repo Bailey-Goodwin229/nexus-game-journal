@@ -16,8 +16,5 @@ WORKDIR /app
 # FIXED: Changed /app/backend/target/ to /app/target/
 COPY --from=build /app/target/*.jar app.jar
 
-# Inform Docker/Render that the app listens on port 8080
-EXPOSE 8080
-
 # Run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
