@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y mysql-server && rm -rf /var/lib/apt/lis
  WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
  #
- ## Create a startup script to initialize MySQL and run Java
+# Create a startup script to initialize MySQL and run Java using a multi-line heredoc
 RUN cat <<'EOF' > /app/entrypoint.sh
 # !/bin/sh
 
@@ -42,6 +42,9 @@ echo "Local MySQL database configured successfully. Starting Spring Boot API..."
 # Start the Spring Boot API application process
 exec java -Dspring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.reactive.ReactiveUserDetailsServiceAutoConfiguration -jar app.jar
 EOF
+
+# FIX: Automatically convert Windows CRLF line endings to Linux LF line endings
+RUN sed -i 's/\r$//' /app/entrypoint.sh
 
 # Grant execution permissions to your startup script
 RUN chmod +x /app/entrypoint.sh
