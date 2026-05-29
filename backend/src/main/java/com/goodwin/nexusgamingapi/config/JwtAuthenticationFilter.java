@@ -72,6 +72,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        // EXPLICIT FIX: Bypass this token filter entirely for ANY browser preflight checks
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
         String path = request.getServletPath();
         // ONLY skip the filter for public authentication onboarding routes
         return path.equals("/api/auth/login") || path.equals("/api/auth/register");
