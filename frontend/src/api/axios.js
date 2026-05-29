@@ -1,17 +1,17 @@
-import axios from 'axios' // Axios is HTTP Client
+import axios from 'axios';
 
-/*
-This is your Axios Interceptor file.
-It’s like a "security checkpoint" that every single communication between your React app and your Spring Boot backend must pass through.
- */
+// 1. Get the raw URL from the environment, defaulting to localhost if missing
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
-// Create an 'instance'
+// 2. Clean up the URL to prevent double '/api/api' paths completely
+const cleanBaseUrl = rawBaseUrl.endsWith('/api') ? rawBaseUrl : `${rawBaseUrl}/api`;
+
 const api = axios.create({
-    // Gets the URL from our .env file.
-    baseURL: import.meta.env.VITE_API_BASE_URL
-        ? `${import.meta.env.VITE_API_BASE_URL}/api`
-        : 'http://localhost:8080/api',
+    baseURL: cleanBaseUrl,
     withCredentials: true,
 });
 
-export default api; // Makes this 'Bean' available to other files
+// Force global authorization headers to carry credential tokens cross-domain
+axios.defaults.withCredentials = true;
+
+export default api;
