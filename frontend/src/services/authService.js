@@ -13,12 +13,12 @@ export const login = async (username, password) => {
 // 2. Logout: Tell the server to "delete" the cookie
 export const logout = async () => {
     try {
-        // We MUST call the backend logout to expire the HttpOnly cookie
         await api.post('/auth/logout');
     } catch (err) {
         console.error("Logout failed on server, but clearing local state anyway.");
     } finally {
-        // Clear any UI-only state and redirect
+        // NEW FIX: Clear the header token signature alongside your state reset!
+        localStorage.removeItem('nexus_token');
         window.location.href = '/login';
     }
 };

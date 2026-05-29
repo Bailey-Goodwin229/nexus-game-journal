@@ -22,11 +22,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    // Calls JwtService and UserDetailsService
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
-    // Intercepts users and confirms if user is holding a valid JWT Keycard
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -34,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = null;
         String username = null;
 
-        // 1 & 2. Look for the "nexus_token" cookie instead of the Authorization header
+        // 1. Look for the "nexus_token" cookie first
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("nexus_token".equals(cookie.getName())) {
@@ -44,19 +42,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
+        // 2. EXPLICIT PRODUCTION FIX: If no token was found in cookies, extract it from the Authorization Header!
+        if (jwt == null) {
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                jwt = authHeader.substring(7);
+            }
+        }
 
-        // 3. If no token found in cookies, move to the next filter
+        // 3. If no token found in cookies or headers, move to the next filter safely
         if (jwt == null) {
             filterChain.doFilter(request, response);
             return;
         }
+
         username = jwtService.extractUsername(jwt);
 
         // 4. If we have a username and the user isn't "Logged in" yet...
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // 5. check if the "Keycard" is valid and not expired
+            // 5. Check if the token is valid and not expired
             if (jwtService.isTokenValid(jwt, userDetails)){
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
@@ -67,12 +73,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        filterChain.doFilter(request, response); // Ensures the quest is pushed along if accepted, if not it kicks them out (Denies)
+
+        filterChain.doFilter(request, response);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        // EXPLICIT FIX: Bypass this token filter entirely for ANY browser preflight checks
+        // Bypass this token filter entirely for ANY browser preflight checks
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             return true;
         }

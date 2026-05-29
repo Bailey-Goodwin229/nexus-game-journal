@@ -3,63 +3,57 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
 import { useAuth } from '../context/AuthContext';
 
-
 const Login = () => {
-    // 'useState' is how we create variables that "refresh" the HTML when they change.
     const [credentials, setCredentials] = useState({ username: '', password: '' })
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { refreshUser } = useAuth(); // 2. Grab the refresh function
+    const { refreshUser } = useAuth();
 
-    // Controller method
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // trys to log in using credentials
-        setError(''); // Clear previous errors
+        setError('');
 
         try {
-            // 3. Log in (sets the cookie in the browser)
-            await login(credentials.username, credentials.password);
+            // 1. Grab the DTO data returning from your authService layer
+            const data = await login(credentials.username, credentials.password);
 
-            // 4. CRITICAL: Tell the AuthContext to go fetch the user info
+            // 2. Extract and save the token if it is included inside your backend's DTO object
+            if (data && data.token) {
+                localStorage.setItem('nexus_token', data.token);
+            }
+
+            // 3. Tell the AuthContext to go fetch the user info
             await refreshUser();
 
-            // 5. Now navigate
+            // 4. Navigate into your journal dashboard
             navigate('/journal');
         } catch (err) {
-            // Use your 'error' state for the UI instead of alert
-            const errorMessage = err.response?.data || "Incorrect username or password.";
+            // Extract plain text error properties to protect the screen from rendering crashes!
+            const errorMessage = err.response?.data?.message || err.response?.data || "Incorrect username or password.";
             setError(errorMessage);
         }
     };
 
     return (
-        // sets the class
         <div className="login-container">
-            {/* onSubmit maps the form's 'Enter' key or Button click to our Java-style Controller method */}
             <form onSubmit={handleSubmit}>
                 <h2>Nexus Gaming Login</h2>
-                {/* Short-circuit evaluation: If 'error' is not empty, render the <p> tag. Like an 'if' statement in Thymeleaf. */}
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <input
                     type="text"
                     placeholder="Username"
-                    /* (e) is the event. setCredentials creates a NEW object, copying existing fields (...)
-                    and overwriting 'username' with the current text box value. */
                     onChange={(e) => setCredentials({...credentials, username: e.target.value})}
                 />
                 <input
                     type="password"
                     placeholder="Password"
-                    /* Same logic: Keep the username we just typed, but update the 'password' field in the state object */
                     onChange={(e) => setCredentials({...credentials, password: e.target.value})}
                 />
-                {/* In a form, the 'submit' type automatically triggers the 'onSubmit' handler in the <form> tag above */}
                 <button type="submit">Unlock Journal</button>
                 <p>New to the journal? <a href="/register">Sign the Guestbook</a></p>
             </form>
         </div>
     );
 };
-// This makes the Login component "Public" so App.jsx can import and display it.
+
 export default Login;

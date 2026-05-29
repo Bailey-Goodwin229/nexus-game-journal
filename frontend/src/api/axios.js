@@ -1,9 +1,6 @@
 import axios from 'axios';
 
-// 1. Get the raw URL from the environment, defaulting to localhost if missing
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-
-// 2. Clean up the URL to prevent double '/api/api' paths completely
 const cleanBaseUrl = rawBaseUrl.endsWith('/api') ? rawBaseUrl : `${rawBaseUrl}/api`;
 
 const api = axios.create({
@@ -11,7 +8,15 @@ const api = axios.create({
     withCredentials: true,
 });
 
-// Force global authorization headers to carry credential tokens cross-domain
-axios.defaults.withCredentials = true;
+// NEW FIX: Automatically grab the token from localStorage and inject it into the header
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('nexus_token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
 
 export default api;
