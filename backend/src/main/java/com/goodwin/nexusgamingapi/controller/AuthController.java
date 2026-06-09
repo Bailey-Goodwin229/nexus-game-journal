@@ -79,7 +79,7 @@ public class AuthController {
                 .secure(true) // Set to true in Production with HTTPS
                 .path("/")
                 .maxAge(maxAgeInSeconds)
-                .sameSite("Lax") // Enforced for matching registration, login, and logout handshakes
+                .sameSite("None") // Enforced for matching registration, login, and logout handshakes
                 .build();
     }
 }
