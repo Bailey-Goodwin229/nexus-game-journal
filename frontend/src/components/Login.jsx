@@ -28,8 +28,12 @@ const Login = () => {
             // 4. Navigate into your journal dashboard
             navigate('/journal');
         } catch (err) {
-            // Extract plain text error properties to protect the screen from rendering crashes!
-            const errorMessage = err.response?.data?.message || err.response?.data || "Incorrect username or password.";
+            const errorMessage =
+                err.response?.data?.error ||
+                err.response?.data?.message ||
+                (typeof err.response?.data === 'string' ? err.response.data : null) ||
+                "Incorrect username or password.";
+
             setError(errorMessage);
         }
     };
