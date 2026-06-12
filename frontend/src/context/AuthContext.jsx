@@ -9,17 +9,18 @@ export const AuthProvider = ({ children }) => {
 
     // 1. Isolate the validation logic so components can manually call it
     const refreshUser = async () => {
+        setLoading(true); // Reset loading to true when starting a validation check
         try {
             const username = await checkSession();
             if (username) {
-                setUser({username});
+                setUser({ username });
             } else {
                 setUser(null);
             }
         } catch (err) {
             setUser(null);
         } finally {
-            setLoading(false);
+            setLoading(false); // Tracks termination cleanly for both success and failure tracks
         }
     };
 

@@ -29,6 +29,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user, HttpServletResponse response) {
+        // 1. Check if username is already taken
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            return ResponseEntity
+                    .status(400)
+                    .body(Map.of("error", "Username is already taken. Please choose another one."));
+        }
+
+        // 2. Proceed with registration if unique
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
