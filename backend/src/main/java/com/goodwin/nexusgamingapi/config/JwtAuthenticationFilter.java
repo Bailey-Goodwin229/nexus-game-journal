@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // 2. EXPLICIT PRODUCTION FIX: If no token was found in cookies, extract it from the Authorization Header!
+        // 2. If no token was found in cookies, extract it from the Authorization Header!
         if (jwt == null) {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {

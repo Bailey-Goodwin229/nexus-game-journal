@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class TwitchService {
 
+    // Injects environmental variables
     @Value("${twitch.client.id}")
     private String clientId;
     @Value("${twitch.url}")
