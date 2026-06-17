@@ -1,6 +1,12 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { checkSession } from '../services/authService';
 
+/*
+This code implements the React Context Provider (AuthProvider) and custom hook (useAuth)
+that completes your entire authentication ecosystem.
+It connects the Axios client, the backend Spring Boot session checks, and the frontend route guards together.
+ */
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {

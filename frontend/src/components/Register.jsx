@@ -41,6 +41,8 @@ const Register = () => {
         }
     };
 
+    // layout for the register page with back button, username text, and two password boxes to confirm along with
+    // a register button to finalize the information
     return (
         <div className="diary-container">
             <div className="diary-page">

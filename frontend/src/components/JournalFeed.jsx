@@ -59,6 +59,7 @@ const JournalFeed = () => {
             return;
         }
 
+        // adds timer to for search before returning error or results and then resets.
         const timer = setTimeout(async () => {
             try {
                 const results = await searchGames(searchTerm);
@@ -104,7 +105,9 @@ const JournalFeed = () => {
         return groups;
     }, {});
 
+    // logic and display for loading the page.
     if (loading) return <div className="nexus-loader">Scanning The Nexus...</div>;
+    // return for when an error arises.
     if (error) return (
         <div className="nexus-error" style={{ textAlign: 'center', marginTop: '50px' }}>
             <h2 style={{ fontFamily: 'cursive' }}>⚠️ Entry Blocked</h2>
@@ -119,9 +122,11 @@ const JournalFeed = () => {
         </div>
     );
 
+    // returns the main journal feed of all the games.
     return (
         <div className="journal-feed">
             <div>
+                {/* Logout button */}
                 <button onClick={handleLogout} className="nav-tab logout-btn">
                     Close Journal
                 </button>
@@ -157,6 +162,7 @@ const JournalFeed = () => {
                         ✕
                     </button>
                 )}
+                {/* Logic for search results (only reveals search if there are more than 3 characters and they match */}
                 {searchTerm.length >= 3 && (
                     <ul className="search-results-dropdown">
                         {searchResults.length > 0 ? (

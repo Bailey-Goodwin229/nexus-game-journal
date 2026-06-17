@@ -39,6 +39,7 @@ const Login = () => {
     };
 
     return (
+        /* Set up for login page with title, username box, password box and submit*/
         <div className="login-container">
             <form onSubmit={handleSubmit}>
                 <h2>Nexus Gaming Login</h2>

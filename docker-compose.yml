@@ -1,5 +1,6 @@
 
 services:
+  # Defines the name of the container service within the internal network.
   mysqldb:
     image: mysql:8.0
     environment:
@@ -10,8 +11,11 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
+  # Defines the container service for your Spring Boot backend application.
   app:
+    # Instructs Docker to build an image for this container dynamically using the Dockerfile located in the parent directory
     build: ..
+    # Ensures that the mysqldb container starts up before Docker attempts to boot up the app container.
     depends_on:
       - mysqldb
     environment:
@@ -19,5 +23,6 @@ services:
       - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DB_ROOT_PASSWORD}
 
+#Declares the lifecycle-managed named volume db_data at the root level of the file, allowing it to be shared or persistent across container rebuilds.
 volumes:
   db_data:
